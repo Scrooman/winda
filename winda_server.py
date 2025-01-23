@@ -21,7 +21,12 @@ wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
-jsonFilePath = os.path.join(os.path.dirname(__file__), 'data', 'statystyki_windy.json')
+
+data_dir = os.path.join(os.path.dirname(__file__), 'data')
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+
+jsonFilePath = os.path.join(data_dir, 'statystyki_windy.json')
 
 
 
