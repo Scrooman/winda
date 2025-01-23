@@ -10,8 +10,9 @@ import sqlite3
 import json
 import os
 import requests
+from flask_cors import CORS
 
-kolejkaPasażerów= []
+kolejkaPasażerów = []
 wielkośćSzybu = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
 ruchWindy = False
@@ -31,7 +32,7 @@ jsonFilePath = os.path.join(data_dir, 'statystyki_windy.json')
 
 
 app = Flask(__name__)
-
+CORS(app)
 
 wlasciwosci_windy = {
     'wielkośćSzybu': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -61,6 +62,10 @@ dane_symulacji = {
     'zmiennaCzęstotliwościGenerowaniaPasażerów': 5
 }
 
+
+@app.route("/")
+def home():
+    return "Witam w aplikacji Flask dla serwera Windy!"
 
 @app.route('/get_winda_status')
 def get_winda_status():
