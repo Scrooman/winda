@@ -123,8 +123,18 @@ def odczytajStatystykiJSON():
         with open(jsonFilePath, 'r') as json_file:
             return json.load(json_file)
     except FileNotFoundError:
-            print("Plik nie istnieje. Zwracam pusty słownik.")
-            return {}
+        return {
+                "przebyta_odleglosc": 0,
+                "zaliczone_przystanki": 0,
+                "pokonane_pietra": 0,
+                "przewiezieni_pasazerowie": {
+                    "typ1": 0,
+                    "typ2": 0,
+                    "typ3": 0
+                },
+                "liczba_otworzen_drzwi": 0,
+                "liczba_oczekujacych_pasazerow": 0
+        }
 
 
 def zapiszStatystykiJSON(statystyki):
@@ -132,8 +142,7 @@ def zapiszStatystykiJSON(statystyki):
         with open(jsonFilePath, 'w') as json_file:
             json.dump(statystyki, json_file)
     except FileNotFoundError:
-        print("Plik nie istnieje. Zwracam pusty słownik.")
-        return {}
+        return
         
 
 def zapiszStatystykiOkresowo():
@@ -315,6 +324,7 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
     global wydarzenieStatusSymulacji
     if dane_symulacji['statusSymulacji'] == 1:
+        odczytajStatystykiJSON()
         wydarzenieStatusSymulacji = True
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
