@@ -151,12 +151,8 @@ def zapiszStatystykiJSON(statystyki):
         
 
 def zapiszStatystykiOkresowo():
-    global wydarzenieZapisywaniaStatystyk
     time.sleep(5)
     zapiszStatystykiJSON(statystyki)
-    wydarzenieZapisywaniaStatystyk = True
-    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-    zapisywanieStatystyk.set()
 
 
 def zapiszStatystykiPrzyZamykaniu():
@@ -336,6 +332,9 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
+        wydarzenieZapisywaniaStatystyk = True
+        threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+        zapisywanieStatystyk.set()
     else:
         wydarzenieSymulacjaPodaży.clear()
         wydarzenieStatusSymulacji = False
@@ -392,9 +391,6 @@ przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-
-
-zapiszStatystykiOkresowo()
 
 
 
