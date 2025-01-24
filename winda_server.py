@@ -118,11 +118,6 @@ def zmien_czestotliwosc():
     return jsonify({'zmiennaCzęstotliwościGenerowaniaPasażerów': dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów']})
 
 
-def zapiszStatystykiJSON(statystyki):
-    with open(jsonFilePath, 'w') as json_file:
-        json.dump(statystyki, json_file)
-
-
 def odczytajStatystykiJSON():
     try:
         with open(jsonFilePath, 'r') as json_file:
@@ -141,6 +136,11 @@ def odczytajStatystykiJSON():
                 "liczba_oczekujacych_pasazerow": 0
         }
 
+
+def zapiszStatystykiJSON(statystyki):
+    with open(jsonFilePath, 'w') as json_file:
+        json.dump(statystyki, json_file)
+        
 
 def zapiszStatystykiOkresowo():
     time.sleep(5)
