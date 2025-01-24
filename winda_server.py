@@ -326,7 +326,7 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 
 
 def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
-    global wydarzenieStatusSymulacji
+    global wydarzenieStatusSymulacji, wydarzenieZapisywaniaStatystyk
     if dane_symulacji['statusSymulacji'] == 1:
         odczytajStatystykiJSON()
         wydarzenieStatusSymulacji = True
@@ -339,6 +339,8 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     else:
         wydarzenieSymulacjaPodaży.clear()
         wydarzenieStatusSymulacji = False
+        zapisywanieStatystyk.clear()
+        wydarzenieZapisywaniaStatystyk = False         
         #zapiszLog(7, None, None, None, None, None, 2)
     #wyświetlLogWWidżecie()
 
