@@ -127,6 +127,9 @@ def odczytajStatystykiJSON():
 def zapiszStatystykiJSON(statystyki):
     with open(jsonFilePath, 'w') as json_file:
         json.dump(statystyki, json_file)
+    except FileNotFoundError:
+        print("Plik nie istnieje. Zwracam pusty słownik.")
+        return {}
         
 
 def zapiszStatystykiOkresowo():
