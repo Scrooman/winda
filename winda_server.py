@@ -121,6 +121,7 @@ def zmien_czestotliwosc():
 def odczytajStatystykiJSON():
     try:
         with open(jsonFilePath, 'r') as json_file:
+            print("Plik istnieje przy wczytania")
             return json.load(json_file)
     except FileNotFoundError:
         print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
@@ -141,6 +142,7 @@ def odczytajStatystykiJSON():
 def zapiszStatystykiJSON(statystyki):
     try:
         with open(jsonFilePath, 'w') as json_file:
+            print("Plik istnieje przy zapisywaniu")
             json.dump(statystyki, json_file)
     except FileNotFoundError:
         print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
