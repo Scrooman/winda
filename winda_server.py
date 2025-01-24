@@ -23,14 +23,10 @@ wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością w
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 
-data_dir = os.path.join(os.path.dirname(__file__), 'data')
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(base_dir, 'data')
 jsonFilePath = os.path.join(data_dir, 'statystyki_windy.json')
-os.makedirs(data_dir, exist_ok=True)
 
 
 app = Flask(__name__)
