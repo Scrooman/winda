@@ -151,8 +151,9 @@ def zapiszStatystykiJSON(statystyki):
         
 
 def zapiszStatystykiOkresowo():
-    time.sleep(5)
-    zapiszStatystykiJSON(statystyki)
+    while wydarzenieZapisywaniaStatystyk == True:
+        time.sleep(5)
+        zapiszStatystykiJSON(statystyki)
 
 
 def zapiszStatystykiPrzyZamykaniu():
