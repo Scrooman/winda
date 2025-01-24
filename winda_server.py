@@ -123,6 +123,7 @@ def odczytajStatystykiJSON():
         with open(jsonFilePath, 'r') as json_file:
             return json.load(json_file)
     except FileNotFoundError:
+        print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
         return {
                 "przebyta_odleglosc": 0,
                 "zaliczone_przystanki": 0,
@@ -142,6 +143,7 @@ def zapiszStatystykiJSON(statystyki):
         with open(jsonFilePath, 'w') as json_file:
             json.dump(statystyki, json_file)
     except FileNotFoundError:
+        print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
         return
         
 
