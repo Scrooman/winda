@@ -24,7 +24,7 @@ wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnoś
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 
 
-jsonFilePath = 'https://winda.onrender.com/opt/render/project/src/data/statystyki_windy.json'
+jsonFilePath = '/persistent/data/statystyki_windy.json'
 
 
 app = Flask(__name__)
