@@ -152,7 +152,7 @@ def zapiszStatystykiJSON(statystyki):
 
 def zapiszStatystykiOkresowo():
     while wydarzenieZapisywaniaStatystyk == True:
-        time.sleep(5)
+        time.sleep(60)
         zapiszStatystykiJSON(statystyki)
 
 
