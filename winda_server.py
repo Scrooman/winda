@@ -18,6 +18,7 @@ pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
 ruchWindy = False
 pracaDrzwiWindy = False
 wydarzenieStatusSymulacji = False
+wydarzenieZapisywaniaStatystyk = False
 wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku jazdaWindy
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
@@ -150,8 +151,10 @@ def zapiszStatystykiJSON(statystyki):
         
 
 def zapiszStatystykiOkresowo():
+    global wydarzenieZapisywaniaStatystyk
     time.sleep(5)
     zapiszStatystykiJSON(statystyki)
+    wydarzenieZapisywaniaStatystyk = True
     threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
     zapisywanieStatystyk.set()
 
