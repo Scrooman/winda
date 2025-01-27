@@ -18,13 +18,15 @@ pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
 #ruchWindy = False
 #pracaDrzwiWindy = False
 #wydarzenieStatusSymulacji = False
+wydarzenieZapisywaniaStatystyk = False
 wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku jazdaWindy
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 
 
-jsonFilePath = 'project/src/data/statystyki_windy.json'
+jsonFilePath = '/data/statystyki_windy.json'
+
 
 app = Flask(__name__)
 CORS(app)
@@ -43,6 +45,7 @@ windy_data = {
     'status': 'OK',
     'polecenia': [],
     'kierunekJazdy': 0,
+    'lokalizacjaWindy': 0,
     'lokalizacjaWindy': 0,
     'ruchWindy': False,
     'pracaDrzwiWindy': False,
@@ -126,8 +129,10 @@ def zmien_czestotliwosc():
 def odczytajStatystykiJSON():
     try:
         with open(jsonFilePath, 'r') as json_file:
+            print("Plik istnieje przy wczytania")
             return json.load(json_file)
     except FileNotFoundError:
+        print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
         return {
                 "przebyta_odleglosc": 0,
                 "zaliczone_przystanki": 0,
@@ -143,15 +148,19 @@ def odczytajStatystykiJSON():
 
 
 def zapiszStatystykiJSON(statystyki):
-    with open(jsonFilePath, 'w') as json_file:
-        json.dump(statystyki, json_file)
-
+    try:
+        with open(jsonFilePath, 'w') as json_file:
+            print("Plik istnieje przy zapisywaniu")
+            json.dump(statystyki, json_file)
+    except FileNotFoundError:
+        print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
+        return
+        
 
 def zapiszStatystykiOkresowo():
-    time.sleep(5)
-    zapiszStatystykiJSON(statystyki)
-    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-    zapisywanieStatystyk.set()
+    while wydarzenieZapisywaniaStatystyk == True:
+        time.sleep(60)
+        zapiszStatystykiJSON(statystyki)
 
 
 def zapiszStatystykiPrzyZamykaniu():
@@ -319,14 +328,21 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 
 
 def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
+    global wydarzenieZapisywaniaStatystyk
     if dane_symulacji['statusSymulacji'] == 1:
+        odczytajStatystykiJSON()
         windy_data['wydarzenieStatusSymulacji'] = True
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
+        wydarzenieZapisywaniaStatystyk = True
+        threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+        zapisywanieStatystyk.set()
     else:
         wydarzenieSymulacjaPodaży.clear()
         windy_data['wydarzenieStatusSymulacji'] = False
+        zapisywanieStatystyk.clear()
+        wydarzenieZapisywaniaStatystyk = False         
         #zapiszLog(7, None, None, None, None, None, 2)
     #wyświetlLogWWidżecie()
 
@@ -380,9 +396,6 @@ przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-
-
-zapiszStatystykiOkresowo()
 
 
 
