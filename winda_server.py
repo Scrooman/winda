@@ -227,13 +227,15 @@ def jazdaWindy():
         zmianaKierunkuJazdy()
         if windy_data['polecenia']:
             if windy_data['lokalizacjaWindy'] == windy_data['polecenia'][0]:
+                dodajPolecenieDrzwi(1)
+                threading.Thread(target=jazdaWindy, daemon=True).start()
+                wydarzenieJazda.set()
                 windy_data['polecenia'].pop(0)
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 symulujWybórPięter()
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
                 zmianaKierunkuJazdy()
-                dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
                     wydarzenieJazda.clear()
                     windy_data['ruchWindy'] = False
@@ -311,8 +313,6 @@ def uruchomPracęDrzwi():
     #else:
         #pass
     windy_data['ruchWindy'] = True
-    threading.Thread(target=jazdaWindy, daemon=True).start()
-    wydarzenieJazda.set()
 
 
 def otwórzDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
