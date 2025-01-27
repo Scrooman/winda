@@ -174,7 +174,7 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia, typUsera=1):
         #wyświetlLogWWidżecie()
         zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
         if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
-            windy_data.get('ruchWindy') = True
+            windy_data['ruchWindy'] = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
             wydarzenieJazda.set()
         else:
@@ -227,10 +227,10 @@ def jazdaWindy():
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
                     wydarzenieJazda.clear()
-                    windy_data.get('ruchWindy') = False
+                    windy_data['ruchWindy'] = False
         else:
             wydarzenieJazda.clear()
-            windy_data.get('ruchWindy') = False
+            windy_data['ruchWindy'] = False
 
 
 def zmianaLokalizacjiWindy():    
@@ -268,14 +268,14 @@ def zmianaKierunkuJazdy():
 def dodajPolecenieDrzwi(rodzajPracy): # 0 - zamknij, 1 - otwórz
     if windy_data.get('ruchWindy') == False:
         wlasciwosci_drzwi['poleceniaDrzwi'].append(rodzajPracy)
-        windy_data.get('pracaDrzwiWindy') = True
+        windy_data['pracaDrzwiWindy'] = True
         threading.Thread(target=uruchomPracęDrzwi, daemon=True).start()
         wydarzeniePracaDrzwi.set()
     if windy_data.get('ruchWindy') == True:
         wydarzenieJazda.clear()
-        windy_data.get('ruchWindy') = False
+        windy_data['ruchWindy'] = False
         wlasciwosci_drzwi['poleceniaDrzwi'].append(rodzajPracy)
-        windy_data.get('pracaDrzwiWindy') = True
+        windy_data['pracaDrzwiWindy'] = True
         threading.Thread(target=uruchomPracęDrzwi, daemon=True).start()
         wydarzeniePracaDrzwi.set()
 
@@ -295,13 +295,13 @@ def uruchomPracęDrzwi():
         otwórzDrzwi()
         wlasciwosci_drzwi['poleceniaDrzwi'].pop(0)
     wydarzeniePracaDrzwi.clear() 
-    windy_data.get('pracaDrzwiWindy') = False
+    windy_data['pracaDrzwiWindy'] = False
     #if polecenia:
         #zapiszLog(3, None, kierunekJazdy, polecenia[0], polecenia, None)
         #wyświetlLogWWidżecie()
     #else:
         #pass
-    windy_data.get('ruchWindy') = True
+    windy_data['ruchWindy'] = True
     threading.Thread(target=jazdaWindy, daemon=True).start()
     wydarzenieJazda.set()
 
@@ -320,13 +320,13 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 
 def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
     if dane_symulacji['statusSymulacji'] == 1:
-        windy_data.get('wydarzenieStatusSymulacji') = True
+        windy_data['wydarzenieStatusSymulacji'] = True
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
     else:
         wydarzenieSymulacjaPodaży.clear()
-        windy_data.get('wydarzenieStatusSymulacji') = False
+        windy_data['wydarzenieStatusSymulacji'] = False
         #zapiszLog(7, None, None, None, None, None, 2)
     #wyświetlLogWWidżecie()
 
