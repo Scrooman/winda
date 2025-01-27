@@ -15,18 +15,16 @@ from flask_cors import CORS
 kolejkaPasażerów = []
 wielkośćSzybu = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
-ruchWindy = False
-pracaDrzwiWindy = False
-wydarzenieStatusSymulacji = False
-wydarzenieZapisywaniaStatystyk = False
+#ruchWindy = False
+#pracaDrzwiWindy = False
+#wydarzenieStatusSymulacji = False
 wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku jazdaWindy
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 
 
-jsonFilePath = '/data/statystyki_windy.json'
-
+jsonFilePath = 'project/src/data/statystyki_windy.json'
 
 app = Flask(__name__)
 CORS(app)
@@ -45,7 +43,10 @@ windy_data = {
     'status': 'OK',
     'polecenia': [],
     'kierunekJazdy': 0,
-    'lokalizacjaWindy': 0
+    'lokalizacjaWindy': 0,
+    'ruchWindy': False,
+    'pracaDrzwiWindy': False,
+    'wydarzenieStatusSymulacji': False
 }
 
 
@@ -70,7 +71,10 @@ def get_winda_status():
         'windy_data': {
             'lokalizacjaWindy': windy_data.get('lokalizacjaWindy'),
             'kierunekJazdy': windy_data.get('kierunekJazdy'),
-            'polecenia': windy_data.get('polecenia')
+            'polecenia': windy_data.get('polecenia'),
+            'ruchWindy': windy_data.get('ruchWindy'),
+            'pracaDrzwiWindy': windy_data.get('pracaDrzwiWindy'),
+            'wydarzenieStatusSymulacji': windy_data.get('wydarzenieStatusSymulacji')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
@@ -122,10 +126,8 @@ def zmien_czestotliwosc():
 def odczytajStatystykiJSON():
     try:
         with open(jsonFilePath, 'r') as json_file:
-            print("Plik istnieje przy wczytania")
             return json.load(json_file)
     except FileNotFoundError:
-        print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
         return {
                 "przebyta_odleglosc": 0,
                 "zaliczone_przystanki": 0,
@@ -141,19 +143,15 @@ def odczytajStatystykiJSON():
 
 
 def zapiszStatystykiJSON(statystyki):
-    try:
-        with open(jsonFilePath, 'w') as json_file:
-            print("Plik istnieje przy zapisywaniu")
-            json.dump(statystyki, json_file)
-    except FileNotFoundError:
-        print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
-        return
-        
+    with open(jsonFilePath, 'w') as json_file:
+        json.dump(statystyki, json_file)
+
 
 def zapiszStatystykiOkresowo():
-    while wydarzenieZapisywaniaStatystyk == True:
-        time.sleep(60)
-        zapiszStatystykiJSON(statystyki)
+    time.sleep(5)
+    zapiszStatystykiJSON(statystyki)
+    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+    zapisywanieStatystyk.set()
 
 
 def zapiszStatystykiPrzyZamykaniu():
@@ -169,15 +167,14 @@ def zaktualizujPolecenia():
 
 
 def wskażPiętro(nowePolecenie, źródłoPolecenia, typUsera=1):
-    global ruchWindy
     if sprawdźCzyDubel(nowePolecenie, źródłoPolecenia) == False:
         windy_data['polecenia'].append(nowePolecenie)
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
         #wyświetlLogWWidżecie()
         zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
-        if ruchWindy is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
-            ruchWindy = True
+        if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
+            windy_data.get('ruchWindy') = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
             wydarzenieJazda.set()
         else:
@@ -214,8 +211,8 @@ def sprawdźCzyDubel(nowePolecenie, źródłoPolecenia):
 
 
 def jazdaWindy():
-    global ruchWindy, liczbaPrzystanków
-    while ruchWindy:
+    global liczbaPrzystanków
+    while windy_data.get('ruchWindy'):
         time.sleep(2) 
         zmianaLokalizacjiWindy()
         zmianaKierunkuJazdy()
@@ -230,10 +227,10 @@ def jazdaWindy():
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
                     wydarzenieJazda.clear()
-                    ruchWindy = False
+                    windy_data.get('ruchWindy') = False
         else:
             wydarzenieJazda.clear()
-            ruchWindy = False
+            windy_data.get('ruchWindy') = False
 
 
 def zmianaLokalizacjiWindy():    
@@ -269,25 +266,21 @@ def zmianaKierunkuJazdy():
 
 
 def dodajPolecenieDrzwi(rodzajPracy): # 0 - zamknij, 1 - otwórz
-    global pracaDrzwiWindy
-    global ruchWindy
-    if ruchWindy == False:
+    if windy_data.get('ruchWindy') == False:
         wlasciwosci_drzwi['poleceniaDrzwi'].append(rodzajPracy)
-        pracaDrzwiWindy = True
+        windy_data.get('pracaDrzwiWindy') = True
         threading.Thread(target=uruchomPracęDrzwi, daemon=True).start()
         wydarzeniePracaDrzwi.set()
-    if ruchWindy == True:
+    if windy_data.get('ruchWindy') == True:
         wydarzenieJazda.clear()
-        ruchWindy = False
+        windy_data.get('ruchWindy') = False
         wlasciwosci_drzwi['poleceniaDrzwi'].append(rodzajPracy)
-        pracaDrzwiWindy = True
+        windy_data.get('pracaDrzwiWindy') = True
         threading.Thread(target=uruchomPracęDrzwi, daemon=True).start()
         wydarzeniePracaDrzwi.set()
 
 
 def uruchomPracęDrzwi():
-    global pracaDrzwiWindy
-    global ruchWindy
     #zapiszLog(4, None, kierunekJazdy, lokalizacjaWindy, polecenia, None)
     #wyświetlLogWWidżecie()
     if wlasciwosci_drzwi['poleceniaDrzwi'][0] == 1 and wlasciwosci_drzwi['statusPracyDrzwi'] == 0 or wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
@@ -302,13 +295,13 @@ def uruchomPracęDrzwi():
         otwórzDrzwi()
         wlasciwosci_drzwi['poleceniaDrzwi'].pop(0)
     wydarzeniePracaDrzwi.clear() 
-    pracaDrzwiWindy = False
+    windy_data.get('pracaDrzwiWindy') = False
     #if polecenia:
         #zapiszLog(3, None, kierunekJazdy, polecenia[0], polecenia, None)
         #wyświetlLogWWidżecie()
     #else:
         #pass
-    ruchWindy = True
+    windy_data.get('ruchWindy') = True
     threading.Thread(target=jazdaWindy, daemon=True).start()
     wydarzenieJazda.set()
 
@@ -326,28 +319,21 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 
 
 def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
-    global wydarzenieStatusSymulacji, wydarzenieZapisywaniaStatystyk
     if dane_symulacji['statusSymulacji'] == 1:
-        odczytajStatystykiJSON()
-        wydarzenieStatusSymulacji = True
+        windy_data.get('wydarzenieStatusSymulacji') = True
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
-        wydarzenieZapisywaniaStatystyk = True
-        threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-        zapisywanieStatystyk.set()
     else:
         wydarzenieSymulacjaPodaży.clear()
-        wydarzenieStatusSymulacji = False
-        zapisywanieStatystyk.clear()
-        wydarzenieZapisywaniaStatystyk = False         
+        windy_data.get('wydarzenieStatusSymulacji') = False
         #zapiszLog(7, None, None, None, None, None, 2)
     #wyświetlLogWWidżecie()
 
 
 def generujPodażPasażerów():
     dostępnaLiczbaPasażerów = [1, 2, 3, 4]
-    while wydarzenieStatusSymulacji == True:
+    while windy_data.get('wydarzenieStatusSymulacji') == True:
         time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
         losowaLokalizacjaPasażera = random.choice(wielkośćSzybu)
         losowyKierunekJazdyPasażera = random.randint(2, 3)
@@ -394,6 +380,9 @@ przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
+
+
+zapiszStatystykiOkresowo()
 
 
 
