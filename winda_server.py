@@ -110,6 +110,7 @@ def get_statystyki():
 
 @app.route('/get_status_symulacji')
 def get_status_symulacji():
+    dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = int(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów', 0))
     return jsonify(dane_symulacji)
 
 
@@ -137,7 +138,7 @@ def wlacz_wylacz_symulacje():
 
 @app.route('/zmien_czestotliwosc', methods=['POST'])
 def zmien_czestotliwosc():
-    dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = request.json.get('zmiennaCzęstotliwościGenerowaniaPasażerów')
+    dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = int(request.json.get('zmiennaCzęstotliwościGenerowaniaPasażerów'))
     return jsonify({'zmiennaCzęstotliwościGenerowaniaPasażerów': dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów']})
 
 
