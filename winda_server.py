@@ -26,6 +26,8 @@ zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością w
 
 
 jsonFilePath = '/data/statystyki_windy.json'
+BASE_URL = 'https://winda.onrender.com'
+URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
 
 app = Flask(__name__)
@@ -111,14 +113,27 @@ def get_status_symulacji():
     return jsonify(dane_symulacji)
 
 
-@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
+"""@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
     dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     włączWyłączSymulacje()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)"""
 
+
+@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
+def wlacz_wylacz_symulacje():
+    status = request.json.get('status')
+    try:
+        response = requests.post(URL_POST_WLACZ_WYLACZ_SYMULACJE, json={'statusSymulacji': status})
+        if response.status_code == 200:
+            return jsonify({'statusSymulacji': response.json()["statusSymulacji"]})
+        else:
+            return jsonify({'error': f'Błąd: {response.status_code}'}), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f'Błąd połączenia: {e}'}), 500
+    
 
 @app.route('/zmien_czestotliwosc', methods=['POST'])
 def zmien_czestotliwosc():
