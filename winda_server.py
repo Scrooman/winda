@@ -50,8 +50,7 @@ windy_data = {
     'lokalizacjaWindy': 0,
     'lokalizacjaWindy': 0,
     'ruchWindy': False,
-    'pracaDrzwiWindy': False,
-    'wydarzenieStatusSymulacji': False
+    'pracaDrzwiWindy': False
 }
 
 
@@ -62,7 +61,8 @@ wybrane_przyciski = {
 
 dane_symulacji = {
     'statusSymulacji': 0,
-    'zmiennaCzęstotliwościGenerowaniaPasażerów': 5
+    'zmiennaCzęstotliwościGenerowaniaPasażerów': 5,
+    'wydarzenieStatusSymulacji': False
 }
 
 
@@ -78,13 +78,13 @@ def get_winda_status():
             'kierunekJazdy': windy_data.get('kierunekJazdy'),
             'polecenia': windy_data.get('polecenia'),
             'ruchWindy': windy_data.get('ruchWindy'),
-            'pracaDrzwiWindy': windy_data.get('pracaDrzwiWindy'),
-            'wydarzenieStatusSymulacji': windy_data.get('wydarzenieStatusSymulacji')
+            'pracaDrzwiWindy': windy_data.get('pracaDrzwiWindy')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
             'status_symulacji': dane_symulacji.get('statusSymulacji'),
-            'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')
+            'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów'),
+            'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji')
         }
     }
     return jsonify(combined_data)
@@ -346,7 +346,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     global wydarzenieZapisywaniaStatystyk
     if dane_symulacji['statusSymulacji'] == 1:
         odczytajStatystykiJSON()
-        windy_data['wydarzenieStatusSymulacji'] = True
+        dane_symulacji['wydarzenieStatusSymulacji'] = True
         threading.Thread(target=generujPodażPasażerów, daemon=True).start()
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
@@ -355,7 +355,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
         zapisywanieStatystyk.set()
     else:
         wydarzenieSymulacjaPodaży.clear()
-        windy_data['wydarzenieStatusSymulacji'] = False
+        dane_symulacji['wydarzenieStatusSymulacji'] = False
         zapisywanieStatystyk.clear()
         wydarzenieZapisywaniaStatystyk = False         
         #zapiszLog(7, None, None, None, None, None, 2)
@@ -364,7 +364,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
 
 def generujPodażPasażerów():
     dostępnaLiczbaPasażerów = [1, 2, 3, 4]
-    while windy_data.get('wydarzenieStatusSymulacji') == True:
+    while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
         losowaLokalizacjaPasażera = random.choice(wielkośćSzybu)
         losowyKierunekJazdyPasażera = random.randint(2, 3)
