@@ -113,15 +113,15 @@ def get_status_symulacji():
     return jsonify(dane_symulacji)
 
 
-"""@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
+@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
     dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     włączWyłączSymulacje()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
-    app.run(debug=True)"""
+    app.run(debug=True)
 
-
+"""
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
     status = request.json.get('status')
@@ -132,7 +132,7 @@ def wlacz_wylacz_symulacje():
         else:
             return jsonify({'error': f'Błąd: {response.status_code}'}), response.status_code
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'Błąd połączenia: {e}'}), 500
+        return jsonify({'error': f'Błąd połączenia: {e}'}), 500"""
     
 
 @app.route('/zmien_czestotliwosc', methods=['POST'])
