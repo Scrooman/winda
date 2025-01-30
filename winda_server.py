@@ -44,13 +44,18 @@ wlasciwosci_drzwi = {
 }
 
 windy_data = {
-    'status': 'OK',
     'polecenia': [],
     'kierunekJazdy': 0,
     'lokalizacjaWindy': 0,
-    'lokalizacjaWindy': 0,
     'ruchWindy': False,
-    'pracaDrzwiWindy': False
+    'pracaDrzwiWindy': False,
+    'statusWindy': 1,
+    'statusDrzwi': 1,
+    'trybPracy': 1,
+    'obciazenie': 0.0,
+    'indeksZużycia': 0.0,
+    'ostatniSerwis': '1970-01-01',
+    'predkoscWindy': 0.65
 }
 
 
@@ -78,7 +83,14 @@ def get_winda_status():
             'kierunekJazdy': windy_data.get('kierunekJazdy'),
             'polecenia': windy_data.get('polecenia'),
             'ruchWindy': windy_data.get('ruchWindy'),
-            'pracaDrzwiWindy': windy_data.get('pracaDrzwiWindy')
+            'pracaDrzwiWindy': windy_data.get('pracaDrzwiWindy'),
+            'statusWindy': windy_data.get('statusWindy'),
+            'statusDrzwi': windy_data.get('statusDrzwi'),
+            'trybPracy': windy_data.get('trybPracy'),
+            'obciazenie': windy_data.get('obciazenie'),
+            'indeksZuzycia': windy_data.get('indeksZuzycia'),
+            'ostatniSerwis': windy_data.get('ostatniSerwis'),
+            'predkosscWindy': windy_data.get('predkoscWindy')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
@@ -238,7 +250,7 @@ def sprawdźCzyDubel(nowePolecenie, źródłoPolecenia):
 def jazdaWindy():
     global liczbaPrzystanków
     while windy_data.get('ruchWindy'):
-        time.sleep(2) 
+        time.sleep(5) 
         zmianaLokalizacjiWindy()
         zmianaKierunkuJazdy()
         if windy_data['polecenia']:
@@ -339,7 +351,7 @@ def otwórzDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     
 def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 0
-    time.sleep(1)
+    time.sleep(2)
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
