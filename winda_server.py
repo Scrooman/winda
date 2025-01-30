@@ -53,7 +53,7 @@ windy_data = {
     'statusDrzwi': 1,
     'trybPracy': 1,
     'obciazenie': 0.0,
-    'indeksZużycia': 0.0,
+    'indeksZuzycia': 0.0,
     'ostatniSerwis': '1970-01-01',
     'predkoscWindy': 0.65
 }
@@ -90,7 +90,7 @@ def get_winda_status():
             'obciazenie': windy_data.get('obciazenie'),
             'indeksZuzycia': windy_data.get('indeksZuzycia'),
             'ostatniSerwis': windy_data.get('ostatniSerwis'),
-            'predkosscWindy': windy_data.get('predkoscWindy')
+            'predkoscWindy': windy_data.get('predkoscWindy')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
