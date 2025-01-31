@@ -419,8 +419,7 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
 
 
 def aktualizujLiczbePasazerowNaPietrze(pietro, liczbaPasazerow):
-    global pietraIPasazerowie
-    pietraIPasazerowie = [(p, l + liczbaPasazerow if p == pietro else l) for p, l in pietraIPasazerowie]
+    windy_data['pietraIPasazerowie'] = [(p, l + liczbaPasazerow if p == pietro else l) for p, l in pietraIPasazerowie]
 
 
 def powiekszLiczbePasazerowWWindzie(dodatkowaLiczbaPasazerow):
