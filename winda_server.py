@@ -53,6 +53,7 @@ windy_data = {
     'statusDrzwi': 1,
     'trybPracy': 1,
     'obciazenie': 0.0,
+    'maxObciazenie': 800.0,
     'indeksZuzycia': 0.0,
     'ostatniSerwis': '1970-01-01',
     'predkoscWindy': 0.65
@@ -61,6 +62,12 @@ windy_data = {
 
 wybrane_przyciski = {
     'słownik': {}
+}
+
+
+zawartosc_windy = {
+    'wiezieniPasazerowie': {},
+    'liczbaPasazerow': 0
 }
 
 
@@ -75,6 +82,7 @@ dane_symulacji = {
 def home():
     return "Witam w aplikacji Flask dla serwera Windy!"
 
+
 @app.route('/get_winda_status')
 def get_winda_status():
     combined_data = {
@@ -88,6 +96,7 @@ def get_winda_status():
             'statusDrzwi': windy_data.get('statusDrzwi'),
             'trybPracy': windy_data.get('trybPracy'),
             'obciazenie': windy_data.get('obciazenie'),
+            'maxObciazenie': windy_data.get('maxObciazenie'),
             'indeksZuzycia': windy_data.get('indeksZuzycia'),
             'ostatniSerwis': windy_data.get('ostatniSerwis'),
             'predkoscWindy': windy_data.get('predkoscWindy')
@@ -97,6 +106,10 @@ def get_winda_status():
             'status_symulacji': dane_symulacji.get('statusSymulacji'),
             'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów'),
             'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji')
+        },
+        'wiezieni_pasazerowie': {
+            'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie'),
+            'liczba_pasazerow': zawartosc_windy.get('liczbaPasazerow')
         }
     }
     return jsonify(combined_data)
@@ -134,18 +147,6 @@ def wlacz_wylacz_symulacje():
 if __name__ == '__main__':
     app.run(debug=True)
 
-"""
-@app.route('/wlacz_wylacz_symulacje', methods=['POST'])
-def wlacz_wylacz_symulacje():
-    status = request.json.get('status')
-    try:
-        response = requests.post(URL_POST_WLACZ_WYLACZ_SYMULACJE, json={'statusSymulacji': status})
-        if response.status_code == 200:
-            return jsonify({'statusSymulacji': response.json()["statusSymulacji"]})
-        else:
-            return jsonify({'error': f'Błąd: {response.status_code}'}), response.status_code
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'Błąd połączenia: {e}'}), 500"""
     
 
 @app.route('/zmien_czestotliwosc', methods=['POST'])
@@ -258,8 +259,9 @@ def jazdaWindy():
                 windy_data['polecenia'].pop(0)
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
-                symulujWybórPięter()
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
+                zmniejszLiczbePasazerowWWindzie()
+                symulujWybórPięter()
                 zmianaKierunkuJazdy()
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
@@ -383,7 +385,7 @@ def generujPodażPasażerów():
         losowyKierunekJazdyPasażera = random.randint(2, 3)
         weights = [5, 3, 1, 1]
         losowaLiczbaPasażerów = random.choices(dostępnaLiczbaPasażerów, weights=weights, k=1)[0]
-        aktualizujLiczbePasazerow(losowaLokalizacjaPasażera, losowaLiczbaPasażerów)
+        aktualizujLiczbePasazerowNaPietrze(losowaLokalizacjaPasażera, losowaLiczbaPasażerów)
         wskażPiętro(losowaLokalizacjaPasażera, losowyKierunekJazdyPasażera)        
     else:
         return
@@ -397,10 +399,11 @@ def symulujWybórPięter(wagaDlaPiętra=5):
         else:   
             losowePiętro = random.choice(wielkośćSzybu)
         wskażPiętro(losowePiętro, 1)
-        liczbaOczekującychPasażerów = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
+        liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
         statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
-        statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerów
-        aktualizujLiczbePasazerow(windy_data['lokalizacjaWindy'], -liczbaOczekującychPasażerów)
+        statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
+        aktualizujLiczbePasazerowNaPietrze(windy_data['lokalizacjaWindy'], -liczbaOczekującychPasażerówNaPietrze)
+        powiekszLiczbePasazerowWWindzie(liczbaOczekującychPasażerówNaPietrze)
         liczbaOczekującychPasażerów = sum(l for p, l in pietraIPasazerowie)
         statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
     else:
@@ -412,10 +415,28 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
     return czasZwłokiGenerowaniaPasażerów
 
 
-def aktualizujLiczbePasazerow(pietro, liczbaPasazerow):
+def aktualizujLiczbePasazerowNaPietrze(pietro, liczbaPasazerow):
     global pietraIPasazerowie
     pietraIPasazerowie = [(p, l + liczbaPasazerow if p == pietro else l) for p, l in pietraIPasazerowie]
 
+
+def powiekszLiczbePasazerowWWindzie(dodatkowaLiczbaPasazerow):
+    zawartosc_windy['liczbaPasazerow'] += dodatkowaLiczbaPasazerow
+    aktualnaLiczbaPasazerowWWindzie = zawartosc_windy['liczbaPasazerow']
+    aktualizujObciazenieWindy(aktualnaLiczbaPasazerowWWindzie)
+
+
+def zmniejszLiczbePasazerowWWindzie(pomniejszajacaLiczbaPasazerow=None): #tymczasową liczbe należy zmienić na liczbę pasażerów, któzy wybrali te piętro
+    tymczasowaPomniejszacaLiczba = zawartosc_windy['liczbaPasazerow']
+    zawartosc_windy['liczbaPasazerow'] -= tymczasowaPomniejszacaLiczba
+    aktualnaLiczbaPasazerowWWindzie = zawartosc_windy['liczbaPasazerow']
+    aktualizujObciazenieWindy(aktualnaLiczbaPasazerowWWindzie)
+
+
+def aktualizujObciazenieWindy(liczbaPasazerow): # W przyszłości zastąpić losową wagą pasażera, dodać do słownika więcej danych o pasażerach
+    #losowaWagaPasazera = random.randint(60, 100)
+    obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
+    windy_data['obciazenie'] += obciazenie
 
 
 statystyki = odczytajStatystykiJSON()
