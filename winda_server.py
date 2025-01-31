@@ -427,16 +427,19 @@ def powiekszLiczbePasazerowWWindzie(dodatkowaLiczbaPasazerow):
 
 
 def zmniejszLiczbePasazerowWWindzie(pomniejszajacaLiczbaPasazerow=None): #tymczasową liczbe należy zmienić na liczbę pasażerów, któzy wybrali te piętro
-    tymczasowaPomniejszacaLiczba = zawartosc_windy['liczbaPasazerow']
-    zawartosc_windy['liczbaPasazerow'] -= tymczasowaPomniejszacaLiczba
+    tymczasowaPomniejszajacaLiczba = zawartosc_windy['liczbaPasazerow']
+    zawartosc_windy['liczbaPasazerow'] -= tymczasowaPomniejszajacaLiczba
     aktualnaLiczbaPasazerowWWindzie = zawartosc_windy['liczbaPasazerow']
     aktualizujObciazenieWindy(aktualnaLiczbaPasazerowWWindzie)
 
 
 def aktualizujObciazenieWindy(liczbaPasazerow): # W przyszłości zastąpić losową wagą pasażera, dodać do słownika więcej danych o pasażerach
     #losowaWagaPasazera = random.randint(60, 100)
-    obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
-    windy_data['obciazenie'] += obciazenie
+    if liczbaPasazerow == 0:
+        obciazenie = 0
+    else:
+        obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
+    windy_data['obciazenie'] = obciazenie
 
 
 statystyki = odczytajStatystykiJSON()
