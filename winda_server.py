@@ -12,9 +12,7 @@ import os
 import requests
 from flask_cors import CORS
 
-kolejkaPasażerów = []
-wielkośćSzybu = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
+
 #ruchWindy = False
 #pracaDrzwiWindy = False
 #wydarzenieStatusSymulacji = False
@@ -34,9 +32,11 @@ app = Flask(__name__)
 CORS(app)
 
 wlasciwosci_windy = {
-    'wielkośćSzybu': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    'wielkośćSzybu': []
 }
 
+wielkośćSzybu = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+wlasciwosci_windy['wielkośćSzybu'] = wielkośćSzybu
 
 wlasciwosci_drzwi = {
     'poleceniaDrzwi': [],
@@ -59,6 +59,8 @@ windy_data = {
     'predkoscWindy': 0.65
 }
 
+pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
+windy_data['pietraIPasazerowie'] = pietraIPasazerowie
 
 wybrane_przyciski = {
     'słownik': {}
@@ -99,7 +101,8 @@ def get_winda_status():
             'maxObciazenie': windy_data.get('maxObciazenie'),
             'indeksZuzycia': windy_data.get('indeksZuzycia'),
             'ostatniSerwis': windy_data.get('ostatniSerwis'),
-            'predkoscWindy': windy_data.get('predkoscWindy')
+            'predkoscWindy': windy_data.get('predkoscWindy'),
+            'pietraIPasazerowie': windy_data.get('pietraIPasazerowie')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
