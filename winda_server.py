@@ -435,6 +435,7 @@ def generujGUID():
         startGUID = 1
     else:
         startGUID += 1
+    startGUID = str(startGUID)
     return startGUID
 
 def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
