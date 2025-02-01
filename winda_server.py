@@ -381,18 +381,50 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
 
 
 def generujPodażPasażerów():
-    dostępnaLiczbaPasażerów = [1, 2, 3, 4]
     while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
-        losowaLokalizacjaPasażera = random.choice(wielkośćSzybu)
-        losowyKierunekJazdyPasażera = random.randint(2, 3)
-        weights = [5, 3, 1, 1]
-        losowaLiczbaPasażerów = random.choices(dostępnaLiczbaPasażerów, weights=weights, k=1)[0]
-        aktualizujLiczbePasazerowNaPietrze(losowaLokalizacjaPasażera, losowaLiczbaPasażerów)
-        wskażPiętro(losowaLokalizacjaPasażera, losowyKierunekJazdyPasażera)        
+        liczbaPasazerow = generujLiczbePasazerowNaPiętrze()
+        lokalizacjaPasażerów = generujLokalizacjePasazerow()
+        celPasazerow = generujCelPasazera(lokalizacjaPasażerów)
+        kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
+        aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
+        wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)        
     else:
         return
 
+
+def generujLiczbePasazerowNaPiętrze():
+    dostępnaLiczbaPasażerów = [1, 2, 3, 4]	# w przyszłości do zmiany na zmienną definiującą liczbe generowanych pasażerów
+    weights = [5, 3, 1, 1]
+    losowaLiczbaPasażerów = random.choices(dostępnaLiczbaPasażerów, weights=weights, k=1)[0]
+    return losowaLiczbaPasażerów
+
+
+def generujLokalizacjePasazerow():
+    lokalizacjaPasazerow = random.choice(wielkośćSzybu) # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
+    return lokalizacjaPasazerow
+
+
+def generujCelPasazera(lokalizacjaPasażerów):
+    while True:
+        celPasazera = random.choice(wielkośćSzybu) # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
+        if celPasazera not in lokalizacjaPasażerów:
+            break
+    return celPasazera
+
+
+def zdefiniujKierunekJazdyPasażera(celPasazera, lokalizacjaPasażerów):
+    if celPasazera > lokalizacjaPasażerów:
+        kierunekJazdyPasażerów = 2
+    else:
+        kierunekJazdyPasażerów = 3
+    return kierunekJazdyPasażerów
+
+
+def aktualizujZawartoscWindy(liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
+    slownik = {'grupa1': {'kierunek': 2, 'cel': 5, 'liczba_pasazerow': {'normalny': [1, 1, 1], 'unikalny': [2, 2], 'legendarny': [1]}}}
+    wartosc = slownik['grupa1']['liczba_pasazerow']['legendarny'][0]
+    
 
 def symulujWybórPięter(wagaDlaPiętra=5):
     global liczbaOczekującychPasażerów
