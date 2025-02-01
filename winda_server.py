@@ -439,7 +439,7 @@ def generujGUID():
 
 def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
     GUID = generujGUID()
-    zawartosc_pieter['oczekujacyPasazerowie'] = {
+    zawartosc_pieter['oczekujacyPasazerowie'][GUID] = {
         'zrodlo': zrodloPasazera,
         'kierunek': kierunekJazdyPasażerów,
         'cel': celPasazerow,
