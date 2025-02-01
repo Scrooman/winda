@@ -70,8 +70,7 @@ zawartosc_pieter = {
 
 
 zawartosc_windy = {
-    'wiezieniPasazerowie': {},
-    'liczbaPasazerow': 0
+    'wiezieniPasazerowie': {}
 }
 
 
@@ -112,8 +111,7 @@ def get_winda_status():
             'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji')
         },
         'wiezieni_pasazerowie': {
-            'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie'),
-            'liczba_pasazerow': zawartosc_windy.get('liczbaPasazerow')
+            'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie')
         },
         'zawartosc_pieter': {
             'oczekujacy_pasazerowie': zawartosc_pieter.get('oczekujacyPasazerowie')
@@ -268,9 +266,11 @@ def jazdaWindy():
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
                 #zmniejszLiczbePasazerowWWindzie()
+                usunGrupePasazerowZWindy(windy_data['lokalizacjaWindy'])
                 celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
                 symulujWybórPięter(celPasazera)
-                usunGrupePasazerowZPietra(windy_data['lokalizacjaWindy'])
+                przeniesGrupePasazerowDoWindy()
+                #usunGrupePasazerowZPietra(windy_data['lokalizacjaWindy'])
                 zmianaKierunkuJazdy()
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
@@ -450,7 +450,6 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
         },
         'liczba_wygenerowanych_pasazerow': None
     }
-
     for i in range(liczbaPasazerow):
         losujIdRodzajuPasazera = random.choice(['normalny', 'unikalny', 'legendarny'])
         losujIdBohatera = random.randint(1, 100) # w przyszłości do dodania zmienna dfiniująca szanse na wylosowanie danego ID
@@ -478,8 +477,8 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
     return czasZwłokiGenerowaniaPasażerów
 
 
-def usunGrupePasazerowZPietra(lokalizacjaWindy):
-    keys_to_remove = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == lokalizacjaWindy]
+def usunGrupePasazerowZPietra(lokalizacja):
+    keys_to_remove = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == lokalizacja]
     for key in keys_to_remove:
         zawartosc_pieter['oczekujacyPasazerowie'].pop(key)
     return
@@ -493,26 +492,45 @@ def pobierzCelGrupyPasazerow(lokalizacjaPasazerow):
     return windy_data['lokalizacjaWindy']
 
 
-def powiekszLiczbePasazerowWWindzie(dodatkowaLiczbaPasazerow):
-    zawartosc_windy['liczbaPasazerow'] += dodatkowaLiczbaPasazerow
-    aktualnaLiczbaPasazerowWWindzie = zawartosc_windy['liczbaPasazerow']
-    aktualizujObciazenieWindy(aktualnaLiczbaPasazerowWWindzie)
+def pobierzZrodloGrupyPasazerow(lokalizacjaPasazerow):
+    if not zawartosc_pieter['oczekujacyPasazerowie']:
+        return windy_data['lokalizacjaWindy']
+    kluczGrupyPasazerow = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == lokalizacjaPasazerow]
+    if kluczGrupyPasazerow:
+        zrodloGrupyPasazerow = zawartosc_pieter['oczekujacyPasazerowie'][kluczGrupyPasazerow[0]]['zrodlo']
+        return zrodloGrupyPasazerow
+    return windy_data['lokalizacjaWindy']
 
 
-def zmniejszLiczbePasazerowWWindzie(pomniejszajacaLiczbaPasazerow=None): #tymczasową liczbe należy zmienić na liczbę pasażerów, któzy wybrali te piętro
-    tymczasowaPomniejszajacaLiczba = zawartosc_windy['liczbaPasazerow']
-    zawartosc_windy['liczbaPasazerow'] -= tymczasowaPomniejszajacaLiczba
-    aktualnaLiczbaPasazerowWWindzie = zawartosc_windy['liczbaPasazerow']
-    aktualizujObciazenieWindy(aktualnaLiczbaPasazerowWWindzie)
-
-
-def aktualizujObciazenieWindy(liczbaPasazerow): # W przyszłości zastąpić losową wagą pasażera, dodać do słownika więcej danych o pasażerach
-    #losowaWagaPasazera = random.randint(60, 100)
-    if liczbaPasazerow == 0:
-        obciazenie = 0
+def przeniesGrupePasazerowDoWindy():
+    zrodloGrupyPasazerow = pobierzZrodloGrupyPasazerow(windy_data['lokalizacjaWindy'])
+    kluczGrupyPasazerow = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == zrodloGrupyPasazerow]
+    if kluczGrupyPasazerow:
+        for key in kluczGrupyPasazerow:
+            zawartosc_windy['wiezieniPasazerowie'][key] = zawartosc_pieter['oczekujacyPasazerowie'][key]
+        usunGrupePasazerowZPietra(zrodloGrupyPasazerow)
+        aktualizujObciazenieWindy()
     else:
+        return
+
+
+def usunGrupePasazerowZWindy(lokalizacja):
+    keys_to_remove = [key for key in zawartosc_windy['wiezieniPasazerowie'].keys() if zawartosc_windy['wiezieniPasazerowie'][key]['cel'] == lokalizacja]
+    for key in keys_to_remove:
+        zawartosc_windy['wiezieniPasazerowie'].pop(key)
+    aktualizujObciazenieWindy()
+
+
+def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasażera, dodać do słownika więcej danych o pasażerach
+    #losowaWagaPasazera = random.randint(60, 100)
+    if not zawartosc_windy['wiezieniPasazerowie']:
+        windy_data['obciazenie'] = 0
+    else:
+        liczbaPasazerow = 0
+        for key in zawartosc_windy['wiezieniPasazerowie'].keys():
+            liczbaPasazerow += zawartosc_windy['wiezieniPasazerowie'][key]['liczba_wygenerowanych_pasazerow']
         obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
-    windy_data['obciazenie'] = obciazenie
+        windy_data['obciazenie'] = obciazenie 
 
 
 statystyki = odczytajStatystykiJSON()
