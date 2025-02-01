@@ -408,7 +408,7 @@ def generujLokalizacjePasazerow():
 def generujCelPasazera(lokalizacjaPasażerów):
     while True:
         celPasazera = random.choice(wielkośćSzybu) # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
-        if celPasazera not in lokalizacjaPasażerów:
+        if celPasazera != lokalizacjaPasażerów:
             break
     return celPasazera
 
