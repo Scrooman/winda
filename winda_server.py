@@ -59,11 +59,13 @@ windy_data = {
     'predkoscWindy': 0.65
 }
 
-pietraIPasazerowie = [(pietro, 0) for pietro in wielkośćSzybu]
-windy_data['pietraIPasazerowie'] = pietraIPasazerowie
 
 wybrane_przyciski = {
     'słownik': {}
+}
+
+zawartosc_pieter = {
+    'oczekujacyPasazerowie': {}
 }
 
 
@@ -101,8 +103,7 @@ def get_winda_status():
             'maxObciazenie': windy_data.get('maxObciazenie'),
             'indeksZuzycia': windy_data.get('indeksZuzycia'),
             'ostatniSerwis': windy_data.get('ostatniSerwis'),
-            'predkoscWindy': windy_data.get('predkoscWindy'),
-            'pietraIPasazerowie': windy_data.get('pietraIPasazerowie')
+            'predkoscWindy': windy_data.get('predkoscWindy')
         },
         'wybrane_przyciski': wybrane_przyciski,
         'dane_symulacji': { 
@@ -113,6 +114,9 @@ def get_winda_status():
         'wiezieni_pasazerowie': {
             'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie'),
             'liczba_pasazerow': zawartosc_windy.get('liczbaPasazerow')
+        },
+        'zawartosc_pieter': {
+            'oczekujacy_pasazerowie': zawartosc_pieter.get('oczekujacyPasazerowie')
         }
     }
     return jsonify(combined_data)
@@ -263,8 +267,10 @@ def jazdaWindy():
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
-                zmniejszLiczbePasazerowWWindzie()
-                symulujWybórPięter()
+                #zmniejszLiczbePasazerowWWindzie()
+                celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
+                symulujWybórPięter(celPasazera)
+                usunGrupePasazerowZPietra(windy_data['lokalizacjaWindy'])
                 zmianaKierunkuJazdy()
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
@@ -387,7 +393,8 @@ def generujPodażPasażerów():
         lokalizacjaPasażerów = generujLokalizacjePasazerow()
         celPasazerow = generujCelPasazera(lokalizacjaPasażerów)
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
-        aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
+        generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
+        #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
         wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)        
     else:
         return
@@ -405,9 +412,9 @@ def generujLokalizacjePasazerow():
     return lokalizacjaPasazerow
 
 
-def generujCelPasazera(lokalizacjaPasażerów):
+def generujCelPasazera(lokalizacjaPasażerów): # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
     while True:
-        celPasazera = random.choice(wielkośćSzybu) # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
+        celPasazera = random.choice(wielkośćSzybu)
         if celPasazera != lokalizacjaPasażerów:
             break
     return celPasazera
@@ -421,26 +428,48 @@ def zdefiniujKierunekJazdyPasażera(celPasazera, lokalizacjaPasażerów):
     return kierunekJazdyPasażerów
 
 
-def aktualizujZawartoscWindy(liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
-    slownik = {'grupa1': {'kierunek': 2, 'cel': 5, 'liczba_pasazerow': {'normalny': [1, 1, 1], 'unikalny': [2, 2], 'legendarny': [1]}}}
-    wartosc = slownik['grupa1']['liczba_pasazerow']['legendarny'][0]
+startGUID = 0
+def generujGUID():
+    global startGUID
+    if startGUID == 99:
+        startGUID = 1
+    else:
+        startGUID += 1
+    return startGUID
+
+def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
+    GUID = generujGUID()
+    zawartosc_pieter['oczekujacyPasazerowie'] = {
+        'zrodlo': zrodloPasazera,
+        'kierunek': kierunekJazdyPasażerów,
+        'cel': celPasazerow,
+        'rodzaje_pasazerow': {
+            'normalny': [],
+            'unikalny': [],
+            'legendarny': []
+        },
+        'liczba_wygenerowanych_pasazerow': None
+    }
+
+    for i in range(liczbaPasazerow):
+        losujIdRodzajuPasazera = random.choice(['normalny', 'unikalny', 'legendarny'])
+        losujIdBohatera = random.randint(1, 100) # w przyszłości do dodania zmienna dfiniująca szanse na wylosowanie danego ID
+        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][losujIdRodzajuPasazera].append(losujIdBohatera)
+    
+    zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
     
 
-def symulujWybórPięter(wagaDlaPiętra=5):
+def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
     if dane_symulacji['statusSymulacji'] == 1:
-        if windy_data['lokalizacjaWindy'] > 0:
-            losowePiętro = random.choices(wielkośćSzybu, weights=[wagaDlaPiętra if piętro == 0 else 1 for piętro in wielkośćSzybu], k=1)[0]
-        else:   
-            losowePiętro = random.choice(wielkośćSzybu)
-        wskażPiętro(losowePiętro, 1)
-        liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
-        statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
-        statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
-        aktualizujLiczbePasazerowNaPietrze(windy_data['lokalizacjaWindy'], -liczbaOczekującychPasażerówNaPietrze)
-        powiekszLiczbePasazerowWWindzie(liczbaOczekującychPasażerówNaPietrze)
-        liczbaOczekującychPasażerów = sum(l for p, l in pietraIPasazerowie)
-        statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
+
+        wskażPiętro(celPasazerow, 1)
+        #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
+        #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
+        #statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
+        #powiekszLiczbePasazerowWWindzie(liczbaOczekującychPasażerówNaPietrze)
+        #liczbaOczekującychPasażerów = sum(l for p, l in pietraIPasazerowie)
+        #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
     else:
         return
 
@@ -450,8 +479,19 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
     return czasZwłokiGenerowaniaPasażerów
 
 
-def aktualizujLiczbePasazerowNaPietrze(pietro, liczbaPasazerow):
-    windy_data['pietraIPasazerowie'] = [(p, l + liczbaPasazerow if p == pietro else l) for p, l in pietraIPasazerowie]
+def usunGrupePasazerowZPietra(lokalizacjaWindy):
+    keys_to_remove = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == lokalizacjaWindy]
+    for key in keys_to_remove:
+        zawartosc_pieter['oczekujacyPasazerowie'].pop(key)
+    return
+
+
+def pobierzCelGrupyPasazerow(lokalizacjaPasazerow):
+    kluczGrupyPasazerow = [key for key in zawartosc_pieter['oczekujacyPasazerowie'].keys() if zawartosc_pieter['oczekujacyPasazerowie'][key]['zrodlo'] == lokalizacjaPasazerow]
+    if kluczGrupyPasazerow:
+        celGrupyPasazerow = zawartosc_pieter['oczekujacyPasazerowie'][kluczGrupyPasazerow[0]]['cel']
+        return celGrupyPasazerow
+    return windy_data['lokalizacjaWindy']
 
 
 def powiekszLiczbePasazerowWWindzie(dodatkowaLiczbaPasazerow):
