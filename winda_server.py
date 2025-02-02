@@ -439,17 +439,17 @@ def generujGUID():
 
 
 characters_pool = {
-"1": {"chance": 8000, "description": "normalny"},
-"2": {"chance": 8000, "description": "normalny"},
-"3": {"chance": 7000, "description": "unikalny"},
-"4": {"chance": 7000, "description": "unikalny"},
-"5": {"chance": 6000, "description": "legendarny"},
-"6": {"chance": 6000, "description": "legendarny"},
+"1": {"chance": 750, "description": "normalny"},
+"2": {"chance": 650, "description": "normalny"},
+"3": {"chance": 450, "description": "unikalny"},
+"4": {"chance": 400, "description": "unikalny"},
+"5": {"chance": 200, "description": "legendarny"},
+"6": {"chance": 150, "description": "legendarny"},
 }
 
 def draw_character():
     # Losowanie liczby od 1 do 10 000
-    roll = random.randint(1, 10000)
+    roll = random.randint(1, 1000)
     cumulative = 0
 
     for id, data in characters_pool.items():
@@ -471,8 +471,8 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
         'liczba_wygenerowanych_pasazerow': None
     }
     for i in range(liczbaPasazerow):
-        i, rodzaj = draw_character()
-        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(i)
+        id, rodzaj = draw_character()
+        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(id)
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
     
 
