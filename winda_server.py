@@ -449,7 +449,7 @@ characters_pool = {
 
 def draw_character():
     # Losowanie liczby od 1 do 10 000
-    roll = random.randint(1, 1000)
+    roll = random.randint(1, 1800)
     cumulative = 0
 
     for id, data in characters_pool.items():
