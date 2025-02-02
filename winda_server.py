@@ -471,17 +471,10 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
         'liczba_wygenerowanych_pasazerow': None
     }
     for i in range(liczbaPasazerow):
-        id, rodzaj = draw_character()
-        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(id)
+        i, rodzaj = draw_character()
+        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(i)
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
     
-
-
-
-
-# Przykład losowania
-for _ in range(10):
-    print(draw_character())
 
 def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
