@@ -437,6 +437,26 @@ def generujGUID():
         startGUID += 1
     return str(startGUID)
 
+
+characters_pool = {
+"1": {"chance": 8000, "description": "normalny"},
+"2": {"chance": 8000, "description": "normalny"},
+"3": {"chance": 7000, "description": "unikalny"},
+"4": {"chance": 7000, "description": "unikalny"},
+"5": {"chance": 6000, "description": "legendarny"},
+"6": {"chance": 6000, "description": "legendarny"},
+}
+
+def draw_character():
+    # Losowanie liczby od 1 do 10 000
+    roll = random.randint(1, 10000)
+    cumulative = 0
+
+    for id, data in characters_pool.items():
+        cumulative += data["chance"]
+        if roll <= cumulative:
+            return id, data["description"]
+
 def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
     GUID = generujGUID()
     zawartosc_pieter['oczekujacyPasazerowie'][GUID] = {
@@ -451,11 +471,17 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
         'liczba_wygenerowanych_pasazerow': None
     }
     for i in range(liczbaPasazerow):
-        losujIdRodzajuPasazera = random.choice(['normalny', 'unikalny', 'legendarny'])
-        losujIdBohatera = random.randint(1, 2) # w przyszłości do dodania zmienna dfiniująca szanse na wylosowanie danego ID
-        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][losujIdRodzajuPasazera].append(losujIdBohatera)
+        id, rodzaj = draw_character()
+        zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(id)
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
     
+
+
+
+
+# Przykład losowania
+for _ in range(10):
+    print(draw_character())
 
 def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
