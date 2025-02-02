@@ -439,12 +439,12 @@ def generujGUID():
 
 
 characters_pool = {
-"1": {"chance": 750, "description": "normalny"},
-"2": {"chance": 650, "description": "normalny"},
-"3": {"chance": 450, "description": "unikalny"},
-"4": {"chance": 400, "description": "unikalny"},
-"5": {"chance": 200, "description": "legendarny"},
-"6": {"chance": 150, "description": "legendarny"},
+"1": {"chance": 300, "description": "normalny"},
+"2": {"chance": 300, "description": "normalny"},
+"3": {"chance": 300, "description": "unikalny"},
+"4": {"chance": 300, "description": "unikalny"},
+"5": {"chance": 300, "description": "legendarny"},
+"6": {"chance": 300, "description": "legendarny"},
 }
 
 def draw_character():
