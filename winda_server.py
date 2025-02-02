@@ -452,7 +452,7 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
     }
     for i in range(liczbaPasazerow):
         losujIdRodzajuPasazera = random.choice(['normalny', 'unikalny', 'legendarny'])
-        losujIdBohatera = random.randint(1, 100) # w przyszłości do dodania zmienna dfiniująca szanse na wylosowanie danego ID
+        losujIdBohatera = random.randint(1, 2) # w przyszłości do dodania zmienna dfiniująca szanse na wylosowanie danego ID
         zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][losujIdRodzajuPasazera].append(losujIdBohatera)
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
     
