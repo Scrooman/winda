@@ -552,10 +552,10 @@ def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasa
 
 
 def zapiszStatystykiPrzewiezionychPasazerow():
-    keys_to_add = [key for key in zawartosc_windy['wiezieniPasazerowie'].keys() if zawartosc_windy['wiezieniPasazerowie'][key]['cel'] == windy_data['lokalizacjaWindy']]
-    for key in keys_to_add:
-        for rodzaj in zawartosc_windy['wiezieniPasazerowie'][key]['rodzaje_pasazerow']:
-            statystyki['przewiezieni_pasazerowie'][rodzaj] += len(zawartosc_windy['wiezieniPasazerowie'][key]['rodzaje_pasazerow'][rodzaj])
+    for key, pasazerowie in zawartosc_windy['wiezieniPasazerowie'].items():
+        if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
+            for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
+                statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
     return
 
 statystyki = odczytajStatystykiJSON()
