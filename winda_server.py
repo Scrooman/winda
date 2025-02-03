@@ -265,12 +265,11 @@ def jazdaWindy():
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
-                #zmniejszLiczbePasazerowWWindzie()
+                zapiszStatystykiPrzewiezionychPasazerow()
                 usunGrupePasazerowZWindy(windy_data['lokalizacjaWindy'])
                 celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
                 symulujWybórPięter(celPasazera)
                 przeniesGrupePasazerowDoWindy()
-                #usunGrupePasazerowZPietra(windy_data['lokalizacjaWindy'])
                 zmianaKierunkuJazdy()
                 dodajPolecenieDrzwi(1)
                 if not windy_data['polecenia']:
@@ -551,6 +550,13 @@ def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasa
         obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
         windy_data['obciazenie'] = obciazenie 
 
+
+def zapiszStatystykiPrzewiezionychPasazerow():
+    keys_to_add = [key for key in zawartosc_windy['wiezieniPasazerowie'].keys() if zawartosc_windy['wiezieniPasazerowie'][key]['cel'] == windy_data['lokalizacjaWindy']]
+    for key in keys_to_add:
+        for rodzaj in zawartosc_windy['wiezieniPasazerowie'][key]['rodzaje_pasazerow']:
+            statystyki['przewiezieni_pasazerowie'][rodzaj] += len(zawartosc_windy['wiezieniPasazerowie'][key]['rodzaje_pasazerow'][rodzaj])
+    return
 
 statystyki = odczytajStatystykiJSON()
 liczbaPokonanychPięter = statystyki["pokonane_pietra"]
