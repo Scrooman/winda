@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, render_template, request
 import random
 import json
@@ -209,13 +210,13 @@ def zaktualizujPolecenia():
     zmianaKierunkuJazdy()
 
 
-def wskażPiętro(nowePolecenie, kierunekJazdy, typUsera=1):
-    if sprawdźCzyDubel(nowePolecenie, kierunekJazdy) == False:
+def wskażPiętro(nowePolecenie, źródłoPolecenia):
+    if sprawdźCzyDubel(nowePolecenie, źródłoPolecenia) == False:
         windy_data['polecenia'].append(nowePolecenie)
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
         #wyświetlLogWWidżecie()
-        zapiszWybranePiętro(nowePolecenie, kierunekJazdy)
+        zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
         if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
             windy_data['ruchWindy'] = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
@@ -226,13 +227,13 @@ def wskażPiętro(nowePolecenie, kierunekJazdy, typUsera=1):
         return
 
 
-def zapiszWybranePiętro(nowePolecenie, kierunekJazdy):
+def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
     if 'słownik' not in wybrane_przyciski:
         wybrane_przyciski['słownik'] = {}
     if not isinstance(wybrane_przyciski.get('słownik'), dict):
         wybrane_przyciski['słownik'] = {}
     klucz = int(nowePolecenie)
-    wybrane_przyciski['słownik'].update({klucz: kierunekJazdy})
+    wybrane_przyciski['słownik'].update({klucz: źródłoPolecenia})
 
 
 def usunPiętroZListyWybranychPięter(lokalizacja):
@@ -240,17 +241,14 @@ def usunPiętroZListyWybranychPięter(lokalizacja):
         wybrane_przyciski['słownik'].pop(lokalizacja, None)
 
 
-def sprawdźCzyDubel(nowePolecenie, kierunekJazdy):
+def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
     if nowePolecenie == windy_data['lokalizacjaWindy']:
         return True
     else:
-        for x in windy_data['polecenia']:
-            if x == nowePolecenie or nowePolecenie == windy_data['lokalizacjaWindy']:
-                #aktualizujStanPrzyciskówDodawaniaPoleceń(nowePolecenie, 1, źródłoPolecenia) - do zmiany
+        for key, value in wybrane_przyciski['słownik'].items():
+            if key == nowePolecenie and value == źródłoPolecenia:
                 return True
-            else:
-                pass
-        return False 
+    return False
 
 
 def jazdaWindy():
@@ -394,7 +392,7 @@ def generujPodażPasażerów():
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
-        wskażPiętro(celPasazerow, kierunekJazdyPasażerów)        
+        wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)        
     else:
         return
 
