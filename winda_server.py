@@ -435,7 +435,7 @@ def aktualizujWagiPięterDoWzywania(pietraDoZmiany):
 
 def generujCelPasazera(lokalizacjaPasażerów): # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
     while True:
-        celPasazera = random.choice(wlasciwosci_windy['wielkośćSzybu'], weights=lista_wag, k=1)[0]
+        celPasazera = random.choice(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWzywania'], k=1)[0]
         if celPasazera != lokalizacjaPasażerów:
             break
     return celPasazera
