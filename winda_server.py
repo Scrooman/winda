@@ -60,8 +60,11 @@ windy_data = {
     'predkoscWindy': 0.65
 }
 
-
 wybrane_przyciski = {
+    'słownik': {}
+}
+
+wskazane_pietra = { # dodać wysyłanie do strony
     'słownik': {}
 }
 
@@ -74,13 +77,17 @@ zawartosc_windy = {
     'wiezieniPasazerowie': {}
 }
 
-
 dane_symulacji = {
     'statusSymulacji': 0,
     'zmiennaCzęstotliwościGenerowaniaPasażerów': 5,
-    'wydarzenieStatusSymulacji': False
+    'wydarzenieStatusSymulacji': False,
+    'listaWagPieterDoWzywania': {}
 }
+listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
+dane_symulacji['listaWagPieterDoWzywania'] = listaWagPieterDoWzywania
 
+
+lista_wag = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
 
 @app.route("/")
 def home():
@@ -216,7 +223,10 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia):
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
         #wyświetlLogWWidżecie()
-        zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
+        if źródłoPolecenia > 1:
+            zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia)
+        else:
+            zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
         if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
             windy_data['ruchWindy'] = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
@@ -227,13 +237,22 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia):
         return
 
 
-def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
+def zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia):
     if 'słownik' not in wybrane_przyciski:
         wybrane_przyciski['słownik'] = {}
     if not isinstance(wybrane_przyciski.get('słownik'), dict):
         wybrane_przyciski['słownik'] = {}
     klucz = int(nowePolecenie)
     wybrane_przyciski['słownik'].update({klucz: źródłoPolecenia})
+
+
+def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
+    if 'słownik' not in wskazane_pietra:
+        wskazane_pietra['słownik'] = {}
+    if not isinstance(wybrane_przyciski.get('słownik'), dict):
+        wskazane_pietra['słownik'] = {}
+    klucz = int(nowePolecenie)
+    wskazane_pietra['słownik'].update({klucz: źródłoPolecenia})
 
 
 def usunPiętroZListyWybranychPięter(lokalizacja):
@@ -405,13 +424,18 @@ def generujLiczbePasazerowNaPiętrze():
 
 
 def generujLokalizacjePasazerow():
-    lokalizacjaPasazerow = random.choice(wielkośćSzybu) # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
+    lokalizacjaPasazerow = random.choice(wlasciwosci_windy['wielkośćSzybu']) # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
     return lokalizacjaPasazerow
+
+
+def aktualizujWagiPięterDoWzywania(pietraDoZmiany):
+    for key, value in pietraDoZmiany.items():
+        dane_symulacji['listaWagPieterDoWzywania'][key] = value
 
 
 def generujCelPasazera(lokalizacjaPasażerów): # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
     while True:
-        celPasazera = random.choice(wielkośćSzybu)
+        celPasazera = random.choice(wlasciwosci_windy['wielkośćSzybu'], weights=lista_wag, k=1)[0]
         if celPasazera != lokalizacjaPasażerów:
             break
     return celPasazera
