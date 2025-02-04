@@ -211,7 +211,7 @@ def zaktualizujPolecenia():
 
 
 def wskażPiętro(nowePolecenie, źródłoPolecenia):
-    if sprawdźCzyDubel(nowePolecenie, źródłoPolecenia) == False:
+    if sprawdzCzyDubel(nowePolecenie, źródłoPolecenia) == False:
         windy_data['polecenia'].append(nowePolecenie)
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
