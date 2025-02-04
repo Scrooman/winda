@@ -392,7 +392,7 @@ def generujPodażPasażerów():
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
-        wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)        
+        wskażPiętro(kierunekJazdyPasażerów, lokalizacjaPasażerów)        
     else:
         return
 
