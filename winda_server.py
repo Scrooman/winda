@@ -209,13 +209,13 @@ def zaktualizujPolecenia():
     zmianaKierunkuJazdy()
 
 
-def wskażPiętro(nowePolecenie, źródłoPolecenia, typUsera=1):
-    if sprawdźCzyDubel(nowePolecenie, źródłoPolecenia) == False:
+def wskażPiętro(nowePolecenie, kierunekJazdy, typUsera=1):
+    if sprawdźCzyDubel(nowePolecenie, kierunekJazdy) == False:
         windy_data['polecenia'].append(nowePolecenie)
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
         #wyświetlLogWWidżecie()
-        zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
+        zapiszWybranePiętro(nowePolecenie, kierunekJazdy)
         if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
             windy_data['ruchWindy'] = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
@@ -226,13 +226,13 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia, typUsera=1):
         return
 
 
-def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
+def zapiszWybranePiętro(nowePolecenie, kierunekJazdy):
     if 'słownik' not in wybrane_przyciski:
         wybrane_przyciski['słownik'] = {}
     if not isinstance(wybrane_przyciski.get('słownik'), dict):
         wybrane_przyciski['słownik'] = {}
     klucz = int(nowePolecenie)
-    wybrane_przyciski['słownik'].update({klucz: źródłoPolecenia})
+    wybrane_przyciski['słownik'].update({klucz: kierunekJazdy})
 
 
 def usunPiętroZListyWybranychPięter(lokalizacja):
@@ -240,7 +240,7 @@ def usunPiętroZListyWybranychPięter(lokalizacja):
         wybrane_przyciski['słownik'].pop(lokalizacja, None)
 
 
-def sprawdźCzyDubel(nowePolecenie, źródłoPolecenia):
+def sprawdźCzyDubel(nowePolecenie, kierunekJazdy):
     if nowePolecenie == windy_data['lokalizacjaWindy']:
         return True
     else:
@@ -394,7 +394,7 @@ def generujPodażPasażerów():
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
-        wskażPiętro(celPasazerow, lokalizacjaPasażerów)        
+        wskażPiętro(celPasazerow, kierunekJazdyPasażerów)        
     else:
         return
 
