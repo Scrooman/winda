@@ -260,14 +260,16 @@ def usunPiętroZListyWybranychPięter(lokalizacja):
         wybrane_przyciski['słownik'].pop(lokalizacja, None)
 
 
-def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
+def sprawdźCzyDubel(nowePolecenie, źródłoPolecenia):
     if nowePolecenie == windy_data['lokalizacjaWindy']:
         return True
     else:
-        for key, value in wybrane_przyciski['słownik'].items():
-            if key == nowePolecenie and value == źródłoPolecenia:
+        for x in windy_data['polecenia']:
+            if x == nowePolecenie or nowePolecenie == windy_data['lokalizacjaWindy']:
                 return True
-    return False
+            else:
+                pass
+        return False 
 
 
 def jazdaWindy():
