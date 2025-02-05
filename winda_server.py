@@ -410,7 +410,7 @@ def generujPodażPasażerów():
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
         wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)
-        if lokalizacjaPasażerów > 1:
+        if kierunekJazdyPasażerów > 1:
             zapiszWybranyPrzycisk(lokalizacjaPasażerów, kierunekJazdyPasażerów)
         else:
             pass
