@@ -411,7 +411,7 @@ def generujPodażPasażerów():
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
         wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)
         if lokalizacjaPasażerów > 1:
-            zapiszWybranyPrzycisk(celPasazerow, kierunekJazdyPasażerów)
+            zapiszWybranyPrzycisk(lokalizacjaPasażerów, kierunekJazdyPasażerów)
         else:
             pass
     else:
