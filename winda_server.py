@@ -223,10 +223,6 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia):
         zaktualizujPolecenia()
         #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
         #wyświetlLogWWidżecie()
-        if źródłoPolecenia > 1:
-            zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia)
-        else:
-            zapiszWybranePiętro(nowePolecenie, źródłoPolecenia)
         if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
             windy_data['ruchWindy'] = True
             threading.Thread(target=jazdaWindy, daemon=True).start()
@@ -413,7 +409,11 @@ def generujPodażPasażerów():
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
         #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
-        wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)        
+        wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)
+        if źródłoPolecenia > 1:
+            zapiszWybranyPrzycisk(celPasazerow, kierunekJazdyPasażerów)
+        else:
+            pass
     else:
         return
 
@@ -504,6 +504,7 @@ def symulujWybórPięter(celPasazerow):
     if dane_symulacji['statusSymulacji'] == 1:
 
         wskażPiętro(celPasazerow, 1)
+        zapiszWybranePiętro(celPasazerow, 1)
         #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
         #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
         #statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
