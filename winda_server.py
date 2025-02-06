@@ -81,13 +81,16 @@ dane_symulacji = {
     'statusSymulacji': 0,
     'zmiennaCzęstotliwościGenerowaniaPasażerów': 5,
     'wydarzenieStatusSymulacji': False,
-    'listaWagPieterDoWzywania': {}
+    'listaWagPieterDoWzywania': {},
+    'listaWagPieterDoWybrania': {}
 }
+
 listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
 dane_symulacji['listaWagPieterDoWzywania'] = listaWagPieterDoWzywania
 
+listaWagPieterDoWybrania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
+dane_symulacji['listaWagPieterDoWybrania'] = listaWagPieterDoWybrania
 
-lista_wag = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
 
 @app.route("/")
 def home():
@@ -385,7 +388,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     if dane_symulacji['statusSymulacji'] == 1:
         odczytajStatystykiJSON()
         dane_symulacji['wydarzenieStatusSymulacji'] = True
-        threading.Thread(target=generujPodażPasażerów, daemon=True).start()
+        threading.Thread(target=dostosujCzestotliwoscGenerowaniaPasazerow(0, 1, 5, 10), daemon=True).start() # do zmiany na dane pobierane z JSON
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
         wydarzenieZapisywaniaStatystyk = True
@@ -402,7 +405,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
 
 def generujPodażPasażerów():
     while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
-        time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
+        #time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
         liczbaPasazerow = generujLiczbePasazerowNaPiętrze()
         lokalizacjaPasażerów = generujLokalizacjePasazerow()
         celPasazerow = generujCelPasazera(lokalizacjaPasażerów)
@@ -418,6 +421,28 @@ def generujPodażPasażerów():
         return
 
 
+def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=18): #wartość stałą jest drugim komponentem defiuniującym delay
+    losowaCzęśćCzęstotliwości = random.randint(0, 4)
+    czasZwłokiGenerowaniaPasażerów = (wartośćStała + int(losowaCzęśćCzęstotliwości) - int(wartośćZmienna))
+    return czasZwłokiGenerowaniaPasażerów
+
+# 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
+#przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
+def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, progowaLiczbaWezwanychPieter, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
+    if trybPracy == 0 and len(windy_data['polecenia']) < progowaLiczbaWezwanychPieter: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
+        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+        time.sleep(int(losowaWartoscOpoznienia))
+        generujPodażPasażerów()
+        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
+    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < progowaLiczbaWezwanychPieter: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
+        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+        time.sleep(int(losowaWartoscOpoznienia))
+        generujPodażPasażerów()
+        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
+    else:
+        pass
+
+
 def generujLiczbePasazerowNaPiętrze():
     dostępnaLiczbaPasażerów = [1, 2, 3, 4]	# w przyszłości do zmiany na zmienną definiującą liczbe generowanych pasażerów
     weights = [5, 3, 1, 1]
@@ -426,7 +451,7 @@ def generujLiczbePasazerowNaPiętrze():
 
 
 def generujLokalizacjePasazerow():
-    lokalizacjaPasazerow = random.choice(wlasciwosci_windy['wielkośćSzybu']) # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
+    lokalizacjaPasazerow = random.choices(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWzywania'], k=1)[0] # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
     return lokalizacjaPasazerow
 
 
@@ -435,9 +460,14 @@ def aktualizujWagiPięterDoWzywania(pietraDoZmiany):
         dane_symulacji['listaWagPieterDoWzywania'][key] = value
 
 
+def aktualizujWagiPięterDoWybrania(pietraDoZmiany):
+    for key, value in pietraDoZmiany.items():
+        dane_symulacji['listaWagPieterDoWybrania'][key] = value
+
+
 def generujCelPasazera(lokalizacjaPasażerów): # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
     while True:
-        celPasazera = random.choices(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWzywania'], k=1)[0]
+        celPasazera = random.choices(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWybrania'], k=1)[0]
         if celPasazera != lokalizacjaPasażerów:
             break
     return celPasazera
@@ -460,7 +490,7 @@ def generujGUID():
         startGUID += 1
     return str(startGUID)
 
-
+# baza bohaterów zostanie przenieisona do SQL
 characters_pool = {
 "1": {"chance": 300, "description": "normalny"},
 "2": {"chance": 300, "description": "normalny"},
@@ -513,11 +543,6 @@ def symulujWybórPięter(celPasazerow):
         #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
     else:
         return
-
-def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=18): #wartość stałą jest drugim komponentem defiuniującym delay
-    losowaCzęśćCzęstotliwości = random.randint(0, 4)
-    czasZwłokiGenerowaniaPasażerów = (wartośćStała + int(losowaCzęśćCzęstotliwości) - int(wartośćZmienna))
-    return czasZwłokiGenerowaniaPasażerów
 
 
 def usunGrupePasazerowZPietra(lokalizacja):
