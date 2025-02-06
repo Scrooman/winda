@@ -24,7 +24,8 @@ wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnoś
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 
 
-jsonFilePath = '/data/statystyki_windy.json'
+jsonFilePathStatistics = '/data/statystyki_windy.json'
+jsonFilePathInicjatoryRuchu = '/data/inicjatory_ruchu.json'
 BASE_URL = 'https://winda.onrender.com'
 URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
@@ -173,7 +174,7 @@ def zmien_czestotliwosc():
 
 def odczytajStatystykiJSON():
     try:
-        with open(jsonFilePath, 'r') as json_file:
+        with open(jsonFilePathStatistics, 'r') as json_file:
             print("Plik istnieje przy wczytania")
             return json.load(json_file)
     except FileNotFoundError:
@@ -194,7 +195,7 @@ def odczytajStatystykiJSON():
 
 def zapiszStatystykiJSON(statystyki):
     try:
-        with open(jsonFilePath, 'w') as json_file:
+        with open(jsonFilePathStatistics, 'w') as json_file:
             print("Plik istnieje przy zapisywaniu")
             json.dump(statystyki, json_file)
     except FileNotFoundError:
@@ -403,21 +404,43 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     #wyświetlLogWWidżecie()
 
 
+def pobierzInicjatoryRuchuJSON():  
+    try:
+        with open(jsonFilePathInicjatoryRuchu, 'r') as json_file:
+            print("Plik istnieje przy wczytania")
+            return json.load(json_file)
+    except FileNotFoundError:
+        print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
+        return {
+                "przebyta_odleglosc": 0,
+                "zaliczone_przystanki": 0,
+                "pokonane_pietra": 0,
+                "przewiezieni_pasazerowie": {
+                    "typ1": 0,
+                    "typ2": 0,
+                    "typ3": 0
+                },
+                "liczba_otworzen_drzwi": 0,
+                "liczba_oczekujacych_pasazerow": 0
+        }
+
+
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
 #przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
 def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
-    if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
-        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
-        time.sleep(int(losowaWartoscOpoznienia))
-        generujPodażPasażerów()
-        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
-    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
-        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
-        time.sleep(int(losowaWartoscOpoznienia))
-        generujPodażPasażerów()
-        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
-    else:
-        pass
+    while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
+        if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
+            losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+            time.sleep(int(losowaWartoscOpoznienia))
+            generujPodażPasażerów()
+            #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
+        elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
+            losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+            time.sleep(int(losowaWartoscOpoznienia))
+            generujPodażPasażerów()
+            #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
+        else:
+            pass
 
 def generujPodażPasażerów():
     if dane_symulacji.get('wydarzenieStatusSymulacji') == True:
