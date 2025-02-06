@@ -403,8 +403,24 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     #wyświetlLogWWidżecie()
 
 
+# 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
+#przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
+def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
+    if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
+        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+        time.sleep(int(losowaWartoscOpoznienia))
+        generujPodażPasażerów()
+        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
+    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
+        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+        time.sleep(int(losowaWartoscOpoznienia))
+        generujPodażPasażerów()
+        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
+    else:
+        pass
+
 def generujPodażPasażerów():
-    while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
+    if dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         #time.sleep(definiujCzasZwłokiGenerowaniaPasażerów(dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów')))
         liczbaPasazerow = generujLiczbePasazerowNaPiętrze()
         lokalizacjaPasażerów = generujLokalizacjePasazerow()
@@ -425,22 +441,6 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
     losowaCzęśćCzęstotliwości = random.randint(0, 4)
     czasZwłokiGenerowaniaPasażerów = (wartośćStała + int(losowaCzęśćCzęstotliwości) - int(wartośćZmienna))
     return czasZwłokiGenerowaniaPasażerów
-
-# 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
-#przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
-def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
-    if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
-        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
-        time.sleep(int(losowaWartoscOpoznienia))
-        generujPodażPasażerów()
-        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
-    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
-        losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
-        time.sleep(int(losowaWartoscOpoznienia))
-        generujPodażPasażerów()
-        #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
-    else:
-        pass
 
 
 def generujLiczbePasazerowNaPiętrze():
