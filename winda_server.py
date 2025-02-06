@@ -388,7 +388,7 @@ def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@
     if dane_symulacji['statusSymulacji'] == 1:
         odczytajStatystykiJSON()
         dane_symulacji['wydarzenieStatusSymulacji'] = True
-        threading.Thread(target=dostosujCzestotliwoscGenerowaniaPasazerow(0, 1, 5, 10), daemon=True).start() # do zmiany na dane pobierane z JSON
+        threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(0, 1, 5, 10), daemon=True).start() # do zmiany na dane pobierane z JSON
         wydarzenieSymulacjaPodaży.set()
         #zapiszLog(6, None, None, None, None, None, 2)
         wydarzenieZapisywaniaStatystyk = True
@@ -428,13 +428,13 @@ def definiujCzasZwłokiGenerowaniaPasażerów(wartośćZmienna, wartośćStała=
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
 #przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
-def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, progowaLiczbaWezwanychPieter, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
-    if trybPracy == 0 and len(windy_data['polecenia']) < progowaLiczbaWezwanychPieter: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
+def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
+    if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
         losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
         time.sleep(int(losowaWartoscOpoznienia))
         generujPodażPasażerów()
         #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
-    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < progowaLiczbaWezwanychPieter: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
+    elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
         losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
         time.sleep(int(losowaWartoscOpoznienia))
         generujPodażPasażerów()
