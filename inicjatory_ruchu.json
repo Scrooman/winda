@@ -1,0 +1,14 @@
+{
+	"idle": {
+			"trybPracy": 0,
+			"limitPolecen": 1,
+			"zmiennaMinimalnegoOpoznienia": 5,
+			"zmiennaMaksymalnegoOpoznienia": 10
+			},
+	"zdarzenie_srednie": {
+			"trybPracy": 1,
+			"limitPolecen": 5,
+			"zmiennaMinimalnegoOpoznienia": 2,
+			"zmiennaMaksymalnegoOpoznienia": 7
+			}
+}
