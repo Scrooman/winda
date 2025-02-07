@@ -167,7 +167,6 @@ def wlacz_wylacz_symulacje():
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
-
     
 
 @app.route('/zmien_czestotliwosc', methods=['POST'])
@@ -392,7 +391,8 @@ def aktywujInicjatorRuchu(nazwaInicjatora):
     global wydarzenieZapisywaniaStatystyk
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     for key, value in inicjatoryRuchu.items():
-        if key == nazwaInicjatora:
+        if nazwaInicjatora == key:
+            print("uruchomiono inicjotor")
             dane_symulacji['inicjatoryRuchu'][key] = value
             trybPracy = value.get('trybPracy')
             limitPolecen = value.get('limitPolecen')
@@ -404,6 +404,7 @@ def aktywujInicjatorRuchu(nazwaInicjatora):
             aktywujZapisywanieStatystyk()
             break
     else:
+        print("nie znaleziono inicjotora")
         wydarzenieSymulacjaPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
         zapisywanieStatystyk.clear()
