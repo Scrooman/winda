@@ -78,12 +78,13 @@ zawartosc_windy = {
     'wiezieniPasazerowie': {}
 }
 
-dane_symulacji = {
+dane_symulacji = {  # dodać zmienne prezentujące aktywny inicjator ruchu
     'statusSymulacji': 0,
     'zmiennaCzęstotliwościGenerowaniaPasażerów': 5,
     'wydarzenieStatusSymulacji': False,
     'listaWagPieterDoWzywania': {},
-    'listaWagPieterDoWybrania': {}
+    'listaWagPieterDoWybrania': {},
+    'inicjatoryRuchu': {}
 }
 
 listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
@@ -120,7 +121,10 @@ def get_winda_status():
         'dane_symulacji': { 
             'status_symulacji': dane_symulacji.get('statusSymulacji'),
             'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów'),
-            'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji')
+            'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji'),
+            'lista_wag_pieter_do_wzywania': dane_symulacji.get('listaWagPieterDoWzywania'),
+            'lista_wag_pieter_do_wybrania': dane_symulacji.get('listaWagPieterDoWybrania'),
+            'inicjatory_ruchu': dane_symulacji.get('inicjatoryRuchu')
         },
         'wiezieni_pasazerowie': {
             'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie')
@@ -159,7 +163,7 @@ def get_status_symulacji():
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
     dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    włączWyłączSymulacje()
+    aktywujInicjatorRuchu('idle') # podstawiony domyslny tryb pracy
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -384,24 +388,33 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
-def włączWyłączSymulacje(): # poprawić statusy symulacji@@@@@@@@@@@@@@@@@@@@@@@@
+def aktywujInicjatorRuchu(nazwaInicjatora):
     global wydarzenieZapisywaniaStatystyk
-    if dane_symulacji['statusSymulacji'] == 1:
-        odczytajStatystykiJSON()
-        dane_symulacji['wydarzenieStatusSymulacji'] = True
-        threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(0, 1, 5, 10), daemon=True).start() # do zmiany na dane pobierane z JSON
-        wydarzenieSymulacjaPodaży.set()
-        #zapiszLog(6, None, None, None, None, None, 2)
-        wydarzenieZapisywaniaStatystyk = True
-        threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-        zapisywanieStatystyk.set()
+    inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
+    for key, value in inicjatoryRuchu.items():
+        if key == nazwaInicjatora:
+            dane_symulacji['inicjatoryRuchu'][key] = value
+            trybPracy = value.get('trybPracy')
+            limitPolecen = value.get('limitPolecen')
+            zmiennaMinimalnegoOpoznienia = value.get('zmiennaMinimalnegoOpoznienia')
+            zmiennaMaksymalnegoOpoznienia = value.get('zmiennaMaksymalnegoOpoznienia')
+            dane_symulacji['wydarzenieStatusSymulacji'] = True
+            threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
+            wydarzenieSymulacjaPodaży.set()
+            aktywujZapisywanieStatystyk()
+            break
     else:
         wydarzenieSymulacjaPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
         zapisywanieStatystyk.clear()
         wydarzenieZapisywaniaStatystyk = False         
-        #zapiszLog(7, None, None, None, None, None, 2)
-    #wyświetlLogWWidżecie()
+
+
+def aktywujZapisywanieStatystyk():
+    global wydarzenieZapisywaniaStatystyk
+    wydarzenieZapisywaniaStatystyk = True
+    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+    zapisywanieStatystyk.set()
 
 
 def pobierzInicjatoryRuchuJSON():  
@@ -410,19 +423,8 @@ def pobierzInicjatoryRuchuJSON():
             print("Plik istnieje przy wczytania")
             return json.load(json_file)
     except FileNotFoundError:
-        print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
-        return {
-                "przebyta_odleglosc": 0,
-                "zaliczone_przystanki": 0,
-                "pokonane_pietra": 0,
-                "przewiezieni_pasazerowie": {
-                    "typ1": 0,
-                    "typ2": 0,
-                    "typ3": 0
-                },
-                "liczba_otworzen_drzwi": 0,
-                "liczba_oczekujacych_pasazerow": 0
-        }
+        print("Plik jsonFilePathInicjatoryRuchu nie istnieje do wczytania.")
+        return {}
 
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
