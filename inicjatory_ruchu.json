@@ -4,7 +4,7 @@
 			"opis": "",
 			"lokalizacjaIkony": "",
 			"unikalnosc": "normalny",
-			"czasTrwania": None,
+			"czasTrwania": null,
 			"trybPracy": 0,
 			"limitPolecen": 1,
 			"zmiennaMinimalnegoOpoznienia": 5,
@@ -12,26 +12,26 @@
 			"zmianaLiczbyPasazerow": 0,
 			"wagaPietraLosowanego": {},
 			"wagaPietraWybieranego": {},
-			"efektNaWinde": None,
-			"efektNaPojemnoscWindy": 0,
-			"efektNaDrzwi": None,
-			"efektNaCierpliwoscPasazerow": 0
+			"efektNaWinde": null,
+			"efektNaPojemnoscWindy": null,
+			"efektNaDrzwi": null,
+			"efektNaCierpliwoscPasazerow": null
 			},
 	"godziny_szczytu": {
 			"nazwa": "Godziny szczytu",
 			"opis": "",
 			"lokalizacjaIkony": "",
 			"unikalnosc": "normalny",
-			"czasTrwania": None,
+			"czasTrwania": null,
 			"trybPracy": 1,
 			"limitPolecen": 5,
 			"zmiennaMinimalnegoOpoznienia": 2,
 			"zmiennaMaksymalnegoOpoznienia": 7,
-			"zmianaLiczbyPasazerow": 0
+			"zmianaLiczbyPasazerow": null
 			"wagaPietraLosowanego": {},
 			"wagaPietraWybieranego": {},
-			"efektNaWinde": None,
-			"efektNaPojemnoscWindy": 0,
-			"efektNaDrzwi": None,
-			"efektNaCierpliwoscPasazerow": 0
+			"efektNaWinde": null,
+			"efektNaPojemnoscWindy": null,
+			"efektNaDrzwi": null,
+			"efektNaCierpliwoscPasazerow": null
 }
