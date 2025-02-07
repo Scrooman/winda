@@ -9,7 +9,7 @@
 	"limitPolecen": 1,
 	"zmiennaMinimalnegoOpoznienia": 5,
 	"zmiennaMaksymalnegoOpoznienia": 10,
-	"zmianaLiczbyPasazerow": 0,
+	"zmianaLiczbyPasazerow": null,
 	"wagaPietraLosowanego": {},
 	"wagaPietraWybieranego": {},
 	"efektNaWinde": null,
@@ -27,7 +27,7 @@
 	"limitPolecen": 5,
 	"zmiennaMinimalnegoOpoznienia": 2,
 	"zmiennaMaksymalnegoOpoznienia": 7,
-	"zmianaLiczbyPasazerow": null
+	"zmianaLiczbyPasazerow": null,
 	"wagaPietraLosowanego": {},
 	"wagaPietraWybieranego": {},
 	"efektNaWinde": null,
