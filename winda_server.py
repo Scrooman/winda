@@ -392,7 +392,7 @@ def aktywujInicjatorRuchu(nazwaInicjatora):
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     for key, value in inicjatoryRuchu.items():
         if nazwaInicjatora == key:
-            print("uruchomiono inicjotor")
+            print("uruchomiono inicjator")
             dane_symulacji['inicjatoryRuchu'][key] = value
             trybPracy = value.get('trybPracy')
             limitPolecen = value.get('limitPolecen')
@@ -421,7 +421,7 @@ def aktywujZapisywanieStatystyk():
 def pobierzInicjatoryRuchuJSON():  
     try:
         with open(jsonFilePathInicjatoryRuchu, 'r') as json_file:
-            print("Plik istnieje przy wczytania")
+            print("Plik z inicjatorami istnieje przy wczytaniu")
             return json.load(json_file)
     except FileNotFoundError:
         print("Plik jsonFilePathInicjatoryRuchu nie istnieje do wczytania.")
