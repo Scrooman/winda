@@ -426,6 +426,9 @@ def pobierzInicjatoryRuchuJSON():
     except FileNotFoundError:
         print("Plik jsonFilePathInicjatoryRuchu nie istnieje do wczytania.")
         return {}
+    except json.JSONDecodeError as e:
+        print(f"Błąd dekodowania JSON: {e}")
+        return {}
 
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
