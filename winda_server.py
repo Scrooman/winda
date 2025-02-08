@@ -468,7 +468,7 @@ def aktywujInicjatorRuchu(key, value):
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
-    if int(czasTrwania) > 0:
+    if czasTrwania != 0:
         dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=czasTrwania)
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
@@ -549,12 +549,12 @@ def generujLokalizacjePasazerow():
 
 def aktualizujWagiPięterDoWzywania(pietraDoZmiany):
     for key, value in pietraDoZmiany.items():
-        dane_symulacji['listaWagPieterDoWzywania'][key] = value
+        dane_symulacji['listaWagPieterDoWzywania'][int(key)] = value
 
 
 def aktualizujWagiPięterDoWybrania(pietraDoZmiany):
     for key, value in pietraDoZmiany.items():
-        dane_symulacji['listaWagPieterDoWybrania'][key] = value
+        dane_symulacji['listaWagPieterDoWybrania'][int(key)] = value
 
 
 def generujCelPasazera(lokalizacjaPasażerów): # w przyszłości do zmiany na zmienną definiującą pożądane cele jazdy
