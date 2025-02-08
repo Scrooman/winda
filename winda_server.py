@@ -22,6 +22,8 @@ wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
 wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
+losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
+wydarzenieLosowaniaInicjatoraPozytywnego = False
 
 
 jsonFilePathStatistics = '/data/statystyki_windy.json'
@@ -78,8 +80,8 @@ zawartosc_windy = {
     'wiezieniPasazerowie': {}
 }
 
-dane_symulacji = {  # dodać zmienne prezentujące aktywny inicjator ruchu
-    'statusSymulacji': 0,
+dane_symulacji = {
+    'statusSymulacji': 1,
     'zmiennaCzęstotliwościGenerowaniaPasażerów': 5,
     'wydarzenieStatusSymulacji': False,
     'listaWagPieterDoWzywania': {},
@@ -162,8 +164,13 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    aktywujInicjatorRuchu('idle') # podstawiony domyslny tryb pracy
+    global wydarzenieLosowaniaInicjatoraPozytywnego
+    #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
+    inicjatorDoUruchomienia = wybierzInicjatorRuchuZListy('idle', None)
+    aktywujInicjatorRuchu(inicjatorDoUruchomienia) # podstawiony domyslny tryb pracy
+    wydarzenieLosowaniaInicjatoraPozytywnego = True
+    threading.Thread(target=lambda: losujInicjatorPozytywnyPoRodzaju(10, 1, 'normalne'), daemon=True).start() # do zmiany na dane pobierane z JSON
+    losowanieInicjatoraPozytywnego.set()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -387,28 +394,64 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
-def aktywujInicjatorRuchu(nazwaInicjatora):
-    global wydarzenieZapisywaniaStatystyk
-    inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
-    for key, value in inicjatoryRuchu.items():
-        if nazwaInicjatora == key:
-            print("uruchomiono inicjator")
-            dane_symulacji['inicjatoryRuchu'][key] = value
-            trybPracy = value.get('trybPracy')
-            limitPolecen = value.get('limitPolecen')
-            zmiennaMinimalnegoOpoznienia = value.get('zmiennaMinimalnegoOpoznienia')
-            zmiennaMaksymalnegoOpoznienia = value.get('zmiennaMaksymalnegoOpoznienia')
-            dane_symulacji['wydarzenieStatusSymulacji'] = True
-            threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
-            wydarzenieSymulacjaPodaży.set()
-            aktywujZapisywanieStatystyk()
-            break
+def losujInicjatorPozytywnyPoRodzaju(czestotliwosc, szansaNaWylosowanieZdarzenia, rodzajZdarzenia):
+    global wydarzenieLosowaniaInicjatoraPozytywnego
+    if czestotliwosc == 1: # testowa wartość, do zmiany na realną wartość
+        losowaWartosc = random.randint(1, 2) # wartośc testowa, do zmiany na realną wartość
+        if losowaWartosc >= szansaNaWylosowanieZdarzenia: # testowa wartość, do zmiany na realną wartość
+            key, value = wybierzInicjatorRuchuZListy(None, rodzajZdarzenia)
+            if key is not None and value is not None:
+                for key in dane_symulacji['inicjatoryRuchu'].keys():
+                    dezaktywujInicjator(key)
+                aktywujInicjatorRuchu(key, value)
+                wydarzenieLosowaniaInicjatoraPozytywnego = False
+                losowanieInicjatoraPozytywnego.clear()
+            else:
+                pass
     else:
-        print("nie znaleziono inicjotora")
-        wydarzenieSymulacjaPodaży.clear()
-        dane_symulacji['wydarzenieStatusSymulacji'] = False
-        zapisywanieStatystyk.clear()
-        wydarzenieZapisywaniaStatystyk = False         
+        pass
+
+
+def dezaktywujInicjator(kluczZdarzenia):
+    if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
+        dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
+    else:
+        pass
+
+
+def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, rodzajInicjatora=None):
+    global wydarzenieZapisywaniaStatystyk, wydarzenieSymulacjaPodaży, zapisywanieStatystyk
+    inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
+    if nazwaInicjatora is not None:
+        for key, value in inicjatoryRuchu.items():
+            if nazwaInicjatora == key:
+                print("znaleziono inicjator po nazwie:", key)
+                return key, value
+    elif rodzajInicjatora is not None:
+        for key, value in inicjatoryRuchu.items():
+            if rodzajInicjatora == value.get('rodzajInicjatora'):
+                print("znaleziono inicjator po rodzaju:", rodzajInicjatora)
+                return key, value
+    print("nie znaleziono inicjatora")
+    wydarzenieSymulacjaPodaży.clear()
+    dane_symulacji['wydarzenieStatusSymulacji'] = False
+    zapisywanieStatystyk.clear()
+    wydarzenieZapisywaniaStatystyk = False 
+    return None, None
+
+
+def aktywujInicjatorRuchu(key, value):
+    global wydarzenieZapisywaniaStatystyk
+    print("uruchomiono inicjator", key)
+    dane_symulacji['inicjatoryRuchu'][key] = value
+    trybPracy = value.get('trybPracy')
+    limitPolecen = value.get('limitPolecen')
+    zmiennaMinimalnegoOpoznienia = value.get('zmiennaMinimalnegoOpoznienia')
+    zmiennaMaksymalnegoOpoznienia = value.get('zmiennaMaksymalnegoOpoznienia')
+    dane_symulacji['wydarzenieStatusSymulacji'] = True
+    threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
+    wydarzenieSymulacjaPodaży.set()
+    aktywujZapisywanieStatystyk()    
 
 
 def aktywujZapisywanieStatystyk():
