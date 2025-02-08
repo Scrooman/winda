@@ -169,7 +169,7 @@ def wlacz_wylacz_symulacje():
     inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
     wydarzenieLosowaniaInicjatoraPozytywnego = True
-    threading.Thread(target=lambda: losujInicjatorPozytywnyPoRodzaju(10, 1, 'normalne'), daemon=True).start() # do zmiany na dane pobierane z JSON
+    threading.Thread(target=lambda: losujInicjatorPozytywnyPoUnikalnosc(10, 1, 'normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
     losowanieInicjatoraPozytywnego.set()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
@@ -394,22 +394,27 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
-def losujInicjatorPozytywnyPoRodzaju(czestotliwosc, szansaNaWylosowanieZdarzenia, rodzajZdarzenia):
+def losujInicjatorPozytywnyPoUnikalnosc(czestotliwosc, szansaNaWylosowanieInicjatora, unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    if czestotliwosc == 1: # testowa wartość, do zmiany na realną wartość
+    while wydarzenieLosowaniaInicjatoraPozytywnego == True:
+        time.sleep(czestotliwosc)
         losowaWartosc = random.randint(1, 2) # wartośc testowa, do zmiany na realną wartość
-        if losowaWartosc >= szansaNaWylosowanieZdarzenia: # testowa wartość, do zmiany na realną wartość
-            key, value = wybierzInicjatorRuchuZListy(None, rodzajZdarzenia)
+        if losowaWartosc >= szansaNaWylosowanieInicjatora: # testowa wartość, do zmiany na realną wartość
+            key, value = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
             if key is not None and value is not None:
                 for key in dane_symulacji['inicjatoryRuchu'].keys():
+                    print('dezaktywowano inicjatory pozytywne')
                     dezaktywujInicjator(key)
+                print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
                 aktywujInicjatorRuchu(key, value)
                 wydarzenieLosowaniaInicjatoraPozytywnego = False
                 losowanieInicjatoraPozytywnego.clear()
             else:
+                print('nie znaleziono inicjatora pozytywnego po unikalności')
                 pass
-    else:
-        pass
+        else:
+            print('nie spełniono warunku częstotliwości losowania inicjatora pozytywnego')
+            pass
 
 
 def dezaktywujInicjator(kluczZdarzenia):
@@ -419,7 +424,7 @@ def dezaktywujInicjator(kluczZdarzenia):
         pass
 
 
-def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, rodzajInicjatora=None):
+def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
     global wydarzenieZapisywaniaStatystyk, wydarzenieSymulacjaPodaży, zapisywanieStatystyk
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     if nazwaInicjatora is not None:
@@ -427,10 +432,10 @@ def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, rodzajInicjatora=None):
             if nazwaInicjatora == key:
                 print("znaleziono inicjator po nazwie:", key)
                 return key, value
-    elif rodzajInicjatora is not None:
+    elif unikalnoscInicjatora is not None:
         for key, value in inicjatoryRuchu.items():
-            if rodzajInicjatora == value.get('rodzajInicjatora'):
-                print("znaleziono inicjator po rodzaju:", rodzajInicjatora)
+            if unikalnoscInicjatora == value.get('unikalnosc'):
+                print("znaleziono inicjator po rodzaju:", unikalnoscInicjatora)
                 return key, value
     print("nie znaleziono inicjatora")
     wydarzenieSymulacjaPodaży.clear()
