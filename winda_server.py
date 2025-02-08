@@ -468,7 +468,7 @@ def aktywujInicjatorRuchu(key, value):
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
-    if czasTrwania > 0:
+    if int(czasTrwania) > 0:
         dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=czasTrwania)
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
