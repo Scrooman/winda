@@ -166,8 +166,8 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global wydarzenieLosowaniaInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    inicjatorDoUruchomienia = wybierzInicjatorRuchuZListy('idle', None)
-    aktywujInicjatorRuchu(inicjatorDoUruchomienia) # podstawiony domyslny tryb pracy
+    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
+    aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
     wydarzenieLosowaniaInicjatoraPozytywnego = True
     threading.Thread(target=lambda: losujInicjatorPozytywnyPoRodzaju(10, 1, 'normalne'), daemon=True).start() # do zmiany na dane pobierane z JSON
     losowanieInicjatoraPozytywnego.set()
