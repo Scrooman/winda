@@ -6,7 +6,7 @@ import threading
 import time
 import tkinter as tk
 from tkinter import messagebox
-import random
+import datetime
 import sqlite3
 import json
 import os
@@ -86,7 +86,8 @@ dane_symulacji = {
     'wydarzenieStatusSymulacji': False,
     'listaWagPieterDoWzywania': {},
     'listaWagPieterDoWybrania': {},
-    'inicjatoryRuchu': {}
+    'inicjatoryRuchu': {},
+    'dataZakonczeniaInicjatoraPozytywnego': None
 }
 
 listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
@@ -126,7 +127,8 @@ def get_winda_status():
             'wydarzenieStatusSymulacji': dane_symulacji.get('wydarzenieStatusSymulacji'),
             'lista_wag_pieter_do_wzywania': dane_symulacji.get('listaWagPieterDoWzywania'),
             'lista_wag_pieter_do_wybrania': dane_symulacji.get('listaWagPieterDoWybrania'),
-            'inicjatory_ruchu': dane_symulacji.get('inicjatoryRuchu')
+            'inicjatory_ruchu': dane_symulacji.get('inicjatoryRuchu'),
+            'data_zakonczenia_inicjatora_pozytywnego': dane_symulacji.get('dataZakonczeniaInicjatoraPozytywnego')
         },
         'wiezieni_pasazerowie': {
             'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie')
@@ -454,11 +456,23 @@ def aktywujInicjatorRuchu(key, value):
     limitPolecen = value.get('limitPolecen')
     zmiennaMinimalnegoOpoznienia = value.get('zmiennaMinimalnegoOpoznienia')
     zmiennaMaksymalnegoOpoznienia = value.get('zmiennaMaksymalnegoOpoznienia')
+    listaWagPieterLosowanych = value.get('wagaPietraLosowanego')
+    aktualizujWagiPięterDoWzywania(listaWagPieterLosowanych)
     dane_symulacji['wydarzenieStatusSymulacji'] = True
+    listaWagPieterWybieranych = value.get('wagaPietraWybieranego')
+    aktualizujWagiPięterDoWybrania(listaWagPieterWybieranych)
+    wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'))
     threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
     wydarzenieSymulacjaPodaży.set()
     aktywujZapisywanieStatystyk()    
 
+
+def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
+    if czasTrwania > 0:
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=czasTrwania)
+    else:
+        dataZakonczeniaInicjatoraPozytywnego = None
+    dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] = dataZakonczeniaInicjatoraPozytywnego
 
 def aktywujZapisywanieStatystyk():
     global wydarzenieZapisywaniaStatystyk
