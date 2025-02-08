@@ -400,14 +400,14 @@ def losujInicjatorPozytywnyPoUnikalnosc(czestotliwosc, szansaNaWylosowanieInicja
         time.sleep(czestotliwosc)
         losowaWartosc = random.randint(1, 2) # wartośc testowa, do zmiany na realną wartość
         if losowaWartosc >= szansaNaWylosowanieInicjatora: # testowa wartość, do zmiany na realną wartość
-            key, value = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
-            if key is not None and value is not None:
+            keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
+            if keyDoAktywacji is not None and valueDoAktywacji is not None:
                 klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
                 for key in klucze_do_dezaktywacji:
                     print('dezaktywowano inicjatory pozytywne')
                     dezaktywujInicjator(key)
                 print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
-                aktywujInicjatorRuchu(key, value)
+                aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
                 wydarzenieLosowaniaInicjatoraPozytywnego = False
                 losowanieInicjatoraPozytywnego.clear()
             else:
