@@ -175,7 +175,8 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global wydarzenieLosowaniaInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    aktywujDomyslnyInicjator() 
+    aktywujDomyslnyInicjator()
+    aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraPozytywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
     losowanieInicjatoraPozytywnego.set()
@@ -242,9 +243,6 @@ def zapiszStatystykiOkresowo():
         time.sleep(60)
         zapiszStatystykiJSON(statystyki)
 
-
-def zapiszStatystykiPrzyZamykaniu():
-    zapiszStatystykiJSON(statystyki)
 
 #KOD FUNKCJI WINDY
 #___________________________________________________________________________________________________________________________
@@ -470,7 +468,7 @@ def dezaktywujInicjator(kluczZdarzenia):
 
 
 def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
-    global wydarzenieZapisywaniaStatystyk, wydarzenieSymulacjaPodaży, zapisywanieStatystyk
+    global wydarzenieSymulacjaPodaży
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     if nazwaInicjatora is not None:
         for key, value in inicjatoryRuchu.items():
@@ -489,13 +487,10 @@ def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, unikalnoscInicjatora=None)
     print("nie znaleziono inicjatora")
     wydarzenieSymulacjaPodaży.clear()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
-    zapisywanieStatystyk.clear()
-    wydarzenieZapisywaniaStatystyk = False 
     return None, None
 
 
 def aktywujInicjatorRuchu(key, value):
-    global wydarzenieZapisywaniaStatystyk
     print("uruchomiono inicjator", key)
     dane_symulacji['inicjatoryRuchu'][key] = value
     trybPracy = value.get('trybPracy')
@@ -509,8 +504,7 @@ def aktywujInicjatorRuchu(key, value):
     aktualizujWagiPięterDoWybrania(listaWagPieterWybieranych)
     wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
     threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
-    wydarzenieSymulacjaPodaży.set()
-    aktywujZapisywanieStatystyk()    
+    wydarzenieSymulacjaPodaży.set()  
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
