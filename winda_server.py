@@ -487,6 +487,7 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
 
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
+    global wydarzenieDezaktywacjiInicjatoraPozytywnego
     while wydarzenieDezaktywacjiInicjatoraPozytywnego == True:
         time.sleep(60)
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
