@@ -442,7 +442,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = 1 #random.randint(1, 3) # wartośc testowa, do zmiany na realną wartość
+    losowaWartosc = random.randint(1, 3) # wartośc testowa, do zmiany na realną wartość
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
