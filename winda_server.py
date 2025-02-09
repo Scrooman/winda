@@ -247,14 +247,6 @@ def aktywujZapisywanieStatystyk():
     threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
     zapisywanieStatystyk.set()
 
-
-statystyki = odczytajStatystykiJSON()
-liczbaPokonanychPięter = statystyki["pokonane_pietra"]
-przebytaOdległość = statystyki["przebyta_odleglosc"]
-liczbaPrzystanków = statystyki["zaliczone_przystanki"]
-statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
-liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-
 #KOD FUNKCJI WINDY
 #___________________________________________________________________________________________________________________________
 
@@ -761,3 +753,9 @@ def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasa
         obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
         windy_data['obciazenie'] = obciazenie 
 
+statystyki = odczytajStatystykiJSON()
+liczbaPokonanychPięter = statystyki["pokonane_pietra"]
+przebytaOdległość = statystyki["przebyta_odleglosc"]
+liczbaPrzystanków = statystyki["zaliczone_przystanki"]
+statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
+liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
