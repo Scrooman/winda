@@ -211,6 +211,20 @@ def odczytajStatystykiJSON():
                 "liczba_otworzen_drzwi": 0,
                 "liczba_oczekujacych_pasazerow": 0
         }
+    except json.JSONDecodeError as e:
+        print(f"Błąd dekodowania JSON: {e}")
+        return {
+            "przebyta_odleglosc": 0,
+            "zaliczone_przystanki": 0,
+            "pokonane_pietra": 0,
+            "przewiezieni_pasazerowie": {
+                "typ1": 0,
+                "typ2": 0,
+                "typ3": 0
+            },
+            "liczba_otworzen_drzwi": 0,
+            "liczba_oczekujacych_pasazerow": 0
+        }
 
 
 def zapiszStatystykiJSON(statystyki):
