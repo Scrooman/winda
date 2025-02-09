@@ -431,16 +431,17 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
         if datetime.datetime.now().hour > 6 and datetime.datetime.now().minute < 23:
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
-            losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora)
+            if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
+                print("odwleczenie w czasie losowania")
+                losowaWartosc = random.randint(1600, 2600)
+                time.sleep(losowaWartosc)
         else:
-            print("brak generowania, odwleczenie w czasie losowania")
-            losowaWartosc = random.randint(1600, 2600)
-            time.sleep(losowaWartosc)
+            time.sleep(1800)
 
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = random.randint(1, 3) # wartośc testowa, do zmiany na realną wartość
+    losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -456,8 +457,8 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
             print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
     else:
-        print('nie spełniono warunku częstotliwości losowania inicjatora pozytywnego')
-        pass
+        print("losowanie zakończone negatywnie")
+        return False
 
 
 def dezaktywujInicjator(kluczZdarzenia):
