@@ -16,7 +16,7 @@ from flask_cors import CORS
 
 #ruchWindy = False
 #pracaDrzwiWindy = False
-#wydarzenieStatusSymulacji = False
+#wydarzenieStatusSymulacji = False  
 wydarzenieZapisywaniaStatystyk = False
 wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku jazdaWindy
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
@@ -195,7 +195,7 @@ def zmien_czestotliwosc():
 def odczytajStatystykiJSON():
     try:
         with open(jsonFilePathStatistics, 'r') as json_file:
-            print("Plik istnieje przy wczytania")
+            print("Plik istnieje przy wczytaniu")
             return json.load(json_file)
     except FileNotFoundError:
         print("Plik nie istnieje do wczytania. Zwracam pusty słownik.")
@@ -231,21 +231,6 @@ def zapiszStatystykiOkresowo():
 
 def zapiszStatystykiPrzyZamykaniu():
     zapiszStatystykiJSON(statystyki)
-
-
-def zapiszStatystykiPrzewiezionychPasazerow():
-    for key, pasazerowie in zawartosc_windy['wiezieniPasazerowie'].items():
-        if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
-            for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
-                statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
-    return
-
-
-def aktywujZapisywanieStatystyk():
-    global wydarzenieZapisywaniaStatystyk
-    wydarzenieZapisywaniaStatystyk = True
-    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-    zapisywanieStatystyk.set()
 
 #KOD FUNKCJI WINDY
 #___________________________________________________________________________________________________________________________
@@ -752,6 +737,21 @@ def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasa
             liczbaPasazerow += zawartosc_windy['wiezieniPasazerowie'][key]['liczba_wygenerowanych_pasazerow']
         obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
         windy_data['obciazenie'] = obciazenie 
+
+
+def zapiszStatystykiPrzewiezionychPasazerow():
+    for key, pasazerowie in zawartosc_windy['wiezieniPasazerowie'].items():
+        if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
+            for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
+                statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
+    return
+
+
+def aktywujZapisywanieStatystyk():
+    global wydarzenieZapisywaniaStatystyk
+    wydarzenieZapisywaniaStatystyk = True
+    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+    zapisywanieStatystyk.set()
 
 statystyki = odczytajStatystykiJSON()
 liczbaPokonanychPięter = statystyki["pokonane_pietra"]
