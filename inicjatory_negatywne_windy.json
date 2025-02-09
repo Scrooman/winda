@@ -1,1 +1,23 @@
-{}
+{
+"awaria_wezwania_windy_do_gory": {
+	"nazwa": "Awaria panelu wezwania windy",
+	"opis": "do gòry"
+	"lokalizacjaIkony": "",
+	"unikalnosc": "normalny",
+	"poziomNatezenia": "Niski",
+	"czasTrwania": 0,
+	"trybPracy": 0,
+	"limitPolecen": null,
+	"zmiennaMinimalnegoOpoznienia": null,
+	"zmiennaMaksymalnegoOpoznienia": null,
+	"zmianaLiczbyPasazerow": 0,
+    "wagaPietraLosowanego": {},
+    "wagaPietraWybieranego": {},
+	"efektNaWinde": 0,
+	"efektNaPojemnoscWindy": 0,
+	"efektNaDrzwi": 0,
+	"efektNaCierpliwoscPasazerow": 0,
+    "awariaKierunkuJazdy": 1,
+    "awariaWybraniaPietra": null
+	}
+}
