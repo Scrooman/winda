@@ -34,6 +34,9 @@ BASE_URL = 'https://winda.onrender.com'
 URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
 
+# KOD ZMIENNYCH GLOABALNYCH
+#___________________________________________________________________________________________________________________________
+
 app = Flask(__name__)
 CORS(app)
 
@@ -98,6 +101,8 @@ dane_symulacji['listaWagPieterDoWzywania'] = listaWagPieterDoWzywania
 listaWagPieterDoWybrania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
 dane_symulacji['listaWagPieterDoWybrania'] = listaWagPieterDoWybrania
 
+#KOD POŁĄCZENIA Z SERWEREM
+#___________________________________________________________________________________________________________________________
 
 @app.route("/")
 def home():
@@ -184,6 +189,8 @@ def zmien_czestotliwosc():
     dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = int(request.json.get('zmiennaCzęstotliwościGenerowaniaPasażerów'))
     return jsonify({'zmiennaCzęstotliwościGenerowaniaPasażerów': dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów']})
 
+# KOD STATYSTYK
+#___________________________________________________________________________________________________________________________
 
 def odczytajStatystykiJSON():
     try:
@@ -225,6 +232,31 @@ def zapiszStatystykiOkresowo():
 def zapiszStatystykiPrzyZamykaniu():
     zapiszStatystykiJSON(statystyki)
 
+
+def zapiszStatystykiPrzewiezionychPasazerow():
+    for key, pasazerowie in zawartosc_windy['wiezieniPasazerowie'].items():
+        if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
+            for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
+                statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
+    return
+
+
+def aktywujZapisywanieStatystyk():
+    global wydarzenieZapisywaniaStatystyk
+    wydarzenieZapisywaniaStatystyk = True
+    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
+    zapisywanieStatystyk.set()
+
+
+statystyki = odczytajStatystykiJSON()
+liczbaPokonanychPięter = statystyki["pokonane_pietra"]
+przebytaOdległość = statystyki["przebyta_odleglosc"]
+liczbaPrzystanków = statystyki["zaliczone_przystanki"]
+statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
+liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
+
+#KOD FUNKCJI WINDY
+#___________________________________________________________________________________________________________________________
 
 def zaktualizujPolecenia():
     if windy_data['kierunekJazdy'] == 2: #jazda do góry
@@ -397,6 +429,9 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
+#KOD FUNCKJI ZDARZEN/INICJATORÓW
+#___________________________________________________________________________________________________________________________
+
 def aktywujDomyslnyInicjator():
     inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
@@ -499,13 +534,6 @@ def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
             pass
     
 
-def aktywujZapisywanieStatystyk():
-    global wydarzenieZapisywaniaStatystyk
-    wydarzenieZapisywaniaStatystyk = True
-    threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
-    zapisywanieStatystyk.set()
-
-
 def pobierzInicjatoryRuchuJSON():  
     try:
         with open(jsonFilePathInicjatoryRuchu, 'r') as json_file:
@@ -517,6 +545,11 @@ def pobierzInicjatoryRuchuJSON():
     except json.JSONDecodeError as e:
         print(f"Błąd dekodowania JSON: {e}")
         return {}
+
+
+#KOD GENEROWANIA PASAŻERÓW
+#___________________________________________________________________________________________________________________________
+
 
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
@@ -717,28 +750,3 @@ def aktualizujObciazenieWindy(): # W przyszłości zastąpić losową wagą pasa
         obciazenie = liczbaPasazerow * 70 #losowaWagaPasazera
         windy_data['obciazenie'] = obciazenie 
 
-
-def zapiszStatystykiPrzewiezionychPasazerow():
-    for key, pasazerowie in zawartosc_windy['wiezieniPasazerowie'].items():
-        if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
-            for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
-                statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
-    return
-
-statystyki = odczytajStatystykiJSON()
-liczbaPokonanychPięter = statystyki["pokonane_pietra"]
-przebytaOdległość = statystyki["przebyta_odleglosc"]
-liczbaPrzystanków = statystyki["zaliczone_przystanki"]
-statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
-liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-
-
-
-"""
-python -m venv venv
-venv\Scripts\activate
-set FLASK_APP=winda_server.py
-
-flask run --debug
-flask --app winda_server.py run --debug
-"""
