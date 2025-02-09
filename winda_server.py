@@ -177,7 +177,7 @@ def wlacz_wylacz_symulacje():
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator() 
     wydarzenieLosowaniaInicjatoraPozytywnego = True
-    threading.Thread(target=lambda: losujInicjatorPozytywnyPoUnikalnosc(10, 1, 'normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
+    threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
     losowanieInicjatoraPozytywnego.set()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
@@ -437,28 +437,36 @@ def aktywujDomyslnyInicjator():
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
 
 
-def losujInicjatorPozytywnyPoUnikalnosc(czestotliwosc, szansaNaWylosowanieInicjatora, unikalnoscInicjatora):
+def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
-        time.sleep(czestotliwosc)
-        losowaWartosc = random.randint(1, 2) # wartośc testowa, do zmiany na realną wartość
-        if losowaWartosc >= szansaNaWylosowanieInicjatora: # testowa wartość, do zmiany na realną wartość
-            keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
-            if keyDoAktywacji is not None and valueDoAktywacji is not None:
-                klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
-                for key in klucze_do_dezaktywacji:
-                    print('dezaktywowano inicjatory pozytywne')
-                    dezaktywujInicjator(key)
-                print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
-                aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
-                wydarzenieLosowaniaInicjatoraPozytywnego = False
-                losowanieInicjatoraPozytywnego.clear()
-            else:
-                print('nie znaleziono inicjatora pozytywnego po unikalności')
-                pass
+        if datetime.datetime.now().hour > 6 and datetime.datetime.now().minute < 23:
+            losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora)
         else:
-            print('nie spełniono warunku częstotliwości losowania inicjatora pozytywnego')
+            losowaWartosc = random.randint(1600, 2600)
+            time.sleep(losowaWartosc)
+
+
+def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
+    global wydarzenieLosowaniaInicjatoraPozytywnego
+    losowaWartosc = 1 #random.randint(1, 3) # wartośc testowa, do zmiany na realną wartość
+    if losowaWartosc == 1: 
+        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
+        if keyDoAktywacji is not None and valueDoAktywacji is not None:
+            klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
+            for key in klucze_do_dezaktywacji:
+                print('dezaktywowano inicjatory pozytywne')
+                dezaktywujInicjator(key)
+            print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
+            aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
+            wydarzenieLosowaniaInicjatoraPozytywnego = False
+            losowanieInicjatoraPozytywnego.clear()
+        else:
+            print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
+    else:
+        print('nie spełniono warunku częstotliwości losowania inicjatora pozytywnego')
+        pass
 
 
 def dezaktywujInicjator(kluczZdarzenia):
@@ -477,10 +485,14 @@ def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, unikalnoscInicjatora=None)
                 print("znaleziono inicjator po nazwie:", key)
                 return key, value
     elif unikalnoscInicjatora is not None:
+        klucze_do_wylosowania = []
         for key, value in inicjatoryRuchu.items():
             if unikalnoscInicjatora == value.get('unikalnosc'):
+                klucze_do_wylosowania.append(key)
                 print("znaleziono inicjator po rodzaju:", unikalnoscInicjatora)
-                return key, value
+        if len(klucze_do_wylosowania) > 0:
+            key = random.choice(klucze_do_wylosowania)
+            return key, inicjatoryRuchu[key]
     print("nie znaleziono inicjatora")
     wydarzenieSymulacjaPodaży.clear()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
