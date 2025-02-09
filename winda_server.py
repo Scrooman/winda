@@ -511,8 +511,8 @@ def aktywujInicjatorRuchu(key, value):
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
-        czasTrwania += 6
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=czasTrwania) # testowo sa sekundy - do zmainy na godziny + losowanie offsetu
+        losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
@@ -549,7 +549,6 @@ def pobierzInicjatoryRuchuJSON():
 
 #KOD GENEROWANIA PASAŻERÓW
 #___________________________________________________________________________________________________________________________
-
 
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
