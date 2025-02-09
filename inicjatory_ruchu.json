@@ -173,7 +173,7 @@
 	},
 	"wielkie_grupy": {
 	"nazwa": "W kupie siła",
-	"opis": "im więcej tym lepiej,
+	"opis": "im więcej tym lepiej",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "normalny",
 	"poziomNatezenia": "Niski",
@@ -214,7 +214,7 @@
 	"efektNaDrzwi": 0,
 	"efektNaCierpliwoscPasazerow": 0
 	},
-	krytyczne_obciazenie_w_dol": {
+	"krytyczne_obciazenie_w_dol": {
 	"nazwa": "Gorączka podróżna",
 	"opis": "Zròbcie miejsca tam na dole..",
 	"lokalizacjaIkony": "",
