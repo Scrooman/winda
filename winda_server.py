@@ -432,8 +432,10 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
         if datetime.datetime.now().hour > 6 and datetime.datetime.now().minute < 23:
+            print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora)
         else:
+            print("brak generowania, odwleczenie w czasie losowania")
             losowaWartosc = random.randint(1600, 2600)
             time.sleep(losowaWartosc)
 
