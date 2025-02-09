@@ -24,6 +24,8 @@ wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnoś
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
 wydarzenieLosowaniaInicjatoraPozytywnego = False
+DezaktywacjaInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
+wydarzenieDezaktywacjiInicjatoraPozytywnego = False
 
 
 jsonFilePathStatistics = '/data/statystyki_windy.json'
@@ -168,8 +170,7 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global wydarzenieLosowaniaInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
-    aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
+    aktywujDomyslnyInicjator() 
     wydarzenieLosowaniaInicjatoraPozytywnego = True
     threading.Thread(target=lambda: losujInicjatorPozytywnyPoUnikalnosc(10, 1, 'normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
     losowanieInicjatoraPozytywnego.set()
@@ -396,6 +397,11 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
     wlasciwosci_drzwi['statusPracyDrzwi'] = 2
 
 
+def aktywujDomyslnyInicjator():
+    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
+    aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
+
+
 def losujInicjatorPozytywnyPoUnikalnosc(czestotliwosc, szansaNaWylosowanieInicjatora, unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
@@ -461,18 +467,36 @@ def aktywujInicjatorRuchu(key, value):
     dane_symulacji['wydarzenieStatusSymulacji'] = True
     listaWagPieterWybieranych = value.get('wagaPietraWybieranego')
     aktualizujWagiPięterDoWybrania(listaWagPieterWybieranych)
-    wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'))
+    wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
     threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
     wydarzenieSymulacjaPodaży.set()
     aktywujZapisywanieStatystyk()    
 
 
-def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
+def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
+    global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=czasTrwania)
+        czasTrwania += 6
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=czasTrwania) # testowo sa sekundy - do zmainy na godziny + losowanie offsetu
+        wydarzenieDezaktywacjiInicjatoraPozytywnego = True
+        DezaktywacjaInicjatoraPozytywnego.set()
+        threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
     dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] = dataZakonczeniaInicjatoraPozytywnego
+
+
+def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
+    while wydarzenieDezaktywacjiInicjatoraPozytywnego == True:
+        time.sleep(60)
+        if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
+            dezaktywujInicjator(kluczInicjatora)
+            wydarzenieDezaktywacjiInicjatoraPozytywnego = False
+            DezaktywacjaInicjatoraPozytywnego.clear()
+            aktywujDomyslnyInicjator() 
+        else:
+            pass
+    
 
 def aktywujZapisywanieStatystyk():
     global wydarzenieZapisywaniaStatystyk
