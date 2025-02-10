@@ -145,8 +145,8 @@ def get_winda_status():
             'oczekujacy_pasazerowie': zawartosc_pieter.get('oczekujacyPasazerowie')
         },
         'wlasciwosci_drzwi': {
-            'poleceniaDrzwi': [],
-            'statusPracyDrzwi': 2
+            'polecenia_drzwi': wlasciwosci_drzwi.get('poleceniaDrzwi'),
+            'status_pracy_drzwi': wlasciwosci_drzwi.get('statusPracyDrzwi')
         }
     }
     return jsonify(combined_data)
