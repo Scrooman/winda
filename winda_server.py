@@ -441,7 +441,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = random.randint(1, 3)
+    losowaWartosc = 1 #random.randint(1, 3) #testowo
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -464,6 +464,8 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
 def dezaktywujInicjator(kluczZdarzenia):
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
+        wydarzenieSymulacjaPodaży.clear()
+        dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
         pass
 
@@ -511,8 +513,8 @@ def aktywujInicjatorRuchu(key, value):
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
-        losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2) #testowo
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
