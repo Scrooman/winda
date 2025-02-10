@@ -281,6 +281,11 @@ def zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia):
     wybrane_przyciski['słownik'].update({klucz: źródłoPolecenia})
 
 
+def usunPiętroZListyWybranychPięter(lokalizacja):
+    if lokalizacja in wybrane_przyciski['słownik']:
+        wybrane_przyciski['słownik'].pop(lokalizacja, None)
+
+
 def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
     if 'słownik' not in wskazane_pietra:
         wskazane_pietra['słownik'] = {}
@@ -290,9 +295,9 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
     wskazane_pietra['słownik'].update({klucz: źródłoPolecenia})
 
 
-def usunPiętroZListyWybranychPięter(lokalizacja):
+def usunPiętroZListyWskazanychPieter(lokalizacja):
     if lokalizacja in wybrane_przyciski['słownik']:
-        wybrane_przyciski['słownik'].pop(lokalizacja, None)
+        wskazane_pietra['słownik'].pop(lokalizacja, None)
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
@@ -319,6 +324,7 @@ def jazdaWindy():
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
+                usunPiętroZListyWskazanychPieter(windy_data['lokalizacjaWindy'])
                 zapiszStatystykiPrzewiezionychPasazerow()
                 usunGrupePasazerowZWindy(windy_data['lokalizacjaWindy'])
                 celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
