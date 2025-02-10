@@ -296,7 +296,7 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
-    if lokalizacja in wybrane_przyciski['słownik']:
+    if lokalizacja in wskazane_pietra['słownik']:
         wskazane_pietra['słownik'].pop(lokalizacja, None)
 
 
