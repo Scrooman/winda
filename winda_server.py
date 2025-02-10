@@ -441,7 +441,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = 1 #random.randint(1, 3) #testowo
+    losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -514,8 +514,8 @@ def aktywujInicjatorRuchu(key, value):
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
-        losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2) #testowo
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
@@ -555,17 +555,16 @@ def pobierzInicjatoryRuchuJSON():
 
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
-#przykłady realnych trybów: idle = (0, 1, 5, 10), zmieniony_zdarzeniem = (1, zmienna_ze_zdarzenia, 2, 7)
 def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
     while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
-            print("losuj pasażera dla trybu pracy 0")
+            print("losuj pasażera dla trybu pracy 0", trybPracy)
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
             #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
         elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
-            print("losuj pasażera dla trybu pracy 1")
+            print("losuj pasażera dla trybu pracy 1", trybPracy)
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
