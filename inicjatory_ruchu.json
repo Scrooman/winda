@@ -130,7 +130,7 @@
 	},
 "godziny_szczytu_od_srodka": {
 	"nazwa": "Atak na skrzydła",
-	"opis": "Odwrót ze środa",
+	"opis": "Odwrót ze środka",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "normalny",
 	"poziomNatezenia": "Średni",
@@ -171,9 +171,9 @@
 	"efektNaDrzwi": 0,
 	"efektNaCierpliwoscPasazerow": 0
 	},
-	"wielkie_grupy": {
+"wielkie_grupy": {
 	"nazwa": "W kupie siła",
-	"opis": "im więcej tym lepiej",
+	"opis": "Im więcej tym lepiej",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "normalny",
 	"poziomNatezenia": "Niski",
@@ -214,9 +214,9 @@
 	"efektNaDrzwi": 0,
 	"efektNaCierpliwoscPasazerow": 0
 	},
-	"krytyczne_obciazenie_w_dol": {
+"krytyczne_obciazenie_w_dol": {
 	"nazwa": "Gorączka podróżna",
-	"opis": "Zròbcie miejsca tam na dole..",
+	"opis": "Zròbcie miejsce tam na dole..",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "rzadki",
 	"poziomNatezenia": "Wysoki",
