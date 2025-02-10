@@ -128,6 +128,7 @@ def get_winda_status():
             'predkoscWindy': windy_data.get('predkoscWindy')
         },
         'wybrane_przyciski': wybrane_przyciski,
+        'wskazane_pietra': wskazane_pietra,
         'dane_symulacji': { 
             'status_symulacji': dane_symulacji.get('statusSymulacji'),
             'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów'),
@@ -429,7 +430,7 @@ def aktywujDomyslnyInicjator():
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
-        if datetime.datetime.now().hour > 2 and datetime.datetime.now().hour < 23:
+        if datetime.datetime.now().hour > 6 and datetime.datetime.now().hour < 23:
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
