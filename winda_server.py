@@ -451,8 +451,8 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
                 dezaktywujInicjator(key)
             print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
             aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
-            wydarzenieLosowaniaInicjatoraPozytywnego = False
             losowanieInicjatoraPozytywnego.clear()
+            wydarzenieLosowaniaInicjatoraPozytywnego = False
         else:
             print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
@@ -502,10 +502,11 @@ def aktywujInicjatorRuchu(key, value):
     zmiennaMaksymalnegoOpoznienia = value.get('zmiennaMaksymalnegoOpoznienia')
     listaWagPieterLosowanych = value.get('wagaPietraLosowanego')
     aktualizujWagiPięterDoWzywania(listaWagPieterLosowanych)
-    dane_symulacji['wydarzenieStatusSymulacji'] = True
     listaWagPieterWybieranych = value.get('wagaPietraWybieranego')
     aktualizujWagiPięterDoWybrania(listaWagPieterWybieranych)
     wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
+    print("uruchamiany inicjator dla:", trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
+    dane_symulacji['wydarzenieStatusSymulacji'] = True
     threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
     wydarzenieSymulacjaPodaży.set()  
 
@@ -529,8 +530,8 @@ def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
         time.sleep(60)
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             dezaktywujInicjator(kluczInicjatora)
-            wydarzenieDezaktywacjiInicjatoraPozytywnego = False
             DezaktywacjaInicjatoraPozytywnego.clear()
+            wydarzenieDezaktywacjiInicjatoraPozytywnego = False
             aktywujDomyslnyInicjator() 
         else:
             pass
@@ -558,13 +559,13 @@ def pobierzInicjatoryRuchuJSON():
 def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
     while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
-            print("losuj dla trybu pracy 0")
+            print("losuj pasażera dla trybu pracy 0")
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
             #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
         elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
-            print("losuj dla trybu pracy 1")
+            print("losuj pasażera dla trybu pracy 1")
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
