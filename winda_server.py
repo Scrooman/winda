@@ -558,11 +558,13 @@ def pobierzInicjatoryRuchuJSON():
 def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
     while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
         if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
+            print("losuj dla trybu pracy 0")
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
             #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - do dodania w przyszłości, aby zbierać dane o odstępie
         elif trybPracy == 1 and len(zawartosc_pieter['oczekujacyPasazerowie']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista wzywjących pięter jest mniejsza niż zadana
+            print("losuj dla trybu pracy 1")
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
             time.sleep(int(losowaWartoscOpoznienia))
             generujPodażPasażerów()
