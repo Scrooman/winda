@@ -429,7 +429,7 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 #___________________________________________________________________________________________________________________________
 
 def aktywujDomyslnyInicjator():
-    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle')
+    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
 
 
@@ -450,7 +450,7 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1: 
-        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(unikalnoscInicjatora)
+        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
             klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
             for key in klucze_do_dezaktywacji:
