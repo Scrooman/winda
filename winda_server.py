@@ -429,7 +429,7 @@ def aktywujDomyslnyInicjator():
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
-        if datetime.datetime.now().hour > 6 and datetime.datetime.now().hour < 23:
+        if datetime.datetime.now().hour > 2 and datetime.datetime.now().hour < 23:
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
