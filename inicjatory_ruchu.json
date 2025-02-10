@@ -1,7 +1,7 @@
 {
 "idle": {
 	"nazwa": "Dzienna jazda",
-	"opis": "Nudy..."
+	"opis": "Nudy...",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "domyślny",
 	"poziomNatezenia": "Niski",
@@ -83,7 +83,7 @@
 	"efektNaWinde": 0,
 	"efektNaPojemnoscWindy": 0,
 	"efektNaDrzwi": 0,
-	"efektNaCierpliwoscPasazerow": 0
+	"": 0
 	},
 "godziny_szczytu_w_gore": {
 	"nazwa": "Godziny szczytu",
@@ -126,7 +126,7 @@
 	"efektNaWinde": 0,
 	"efektNaPojemnoscWindy": 0,
 	"efektNaDrzwi": 0,
-	"efektNaCierpliwoscPasazerow": 0
+	"": 0
 	},
 "godziny_szczytu_od_srodka": {
 	"nazwa": "Atak na skrzydła",
