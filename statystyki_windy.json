@@ -1,1 +1,17 @@
-{"przebyta_odleglosc": 0, "zaliczone_przystanki": 0, "pokonane_pietra": 0, "przewiezieni_pasazerowie": {"typ1": 0, "typ2": 0, "typ3": 0}, "liczba_otworzen_drzwi": 0, "liczba_oczekujacych_pasazerow": 0}
+{
+  "przebyta_odleglosc": 0,
+  "zaliczone_przystanki": 0,
+  "pokonane_pietra": 0,
+  "przewiezieni_pasazerowie": {
+      "typ1": 0,
+      "typ2": 0,
+      "typ3": 0
+  },
+  "nieobsluzeni_pasazerowie": {
+      "typ1": 0,
+      "typ2": 0,
+      "typ3": 0
+  },
+  "liczba_otworzen_drzwi": 0,
+  "liczba_oczekujacych_pasazerow": 0
+}
