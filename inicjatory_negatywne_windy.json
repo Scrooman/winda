@@ -1,7 +1,7 @@
 {
-"awaria_wezwania_windy_do_gory": {
+"awaria_wezwania_windy": {
 	"nazwa": "Awaria panelu wezwania windy",
-	"opis": "do gòry",
+	"opis": "",
 	"lokalizacjaIkony": "",
 	"unikalnosc": "normalny",
 	"poziomNatezenia": "Niski",
@@ -18,27 +18,6 @@
 	"efektNaDrzwi": 0,
 	"efektNaCierpliwoscPasazerow": 0,
  "awariaKierunkuJazdy": 1,
- "awariaWybraniaPietra": null
-	},
-	"awaria_wezwania_windy_do_dolu": {
-	"nazwa": "Awaria panelu wezwania windy",
-	"opis": "do dołu",
-	"lokalizacjaIkony": "",
-	"unikalnosc": "normalny",
-	"poziomNatezenia": "Niski",
-	"czasTrwania": 0,
-	"trybPracy": 0,
-	"limitPolecen": null,
-	"zmiennaMinimalnegoOpoznienia": null,
-	"zmiennaMaksymalnegoOpoznienia": null,
-	"zmianaLiczbyPasazerow": 0,
- "wagaPietraLosowanego": {},
- "wagaPietraWybieranego": {},
-	"efektNaWinde": 0,
-	"efektNaPojemnoscWindy": 0,
-	"efektNaDrzwi": 0,
-	"efektNaCierpliwoscPasazerow": 0,
- "awariaKierunkuJazdy": 2,
  "awariaWybraniaPietra": null
 	},
 	"awaria_wybrania_pietra": {
