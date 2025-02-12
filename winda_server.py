@@ -845,18 +845,16 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
 
 def oznaczWygenerowanychPasazerowJakoNieobsluzonych():
     for pietra in wylaczone_pietra['słownik']: # weryfikacja czy grupa pasazerow zostala wygenerowana na wyłączonym piętrze
-        for grupa in zawartosc_pieter['oczekujacyPasazerowie'].keys():
-            if zawartosc_pieter['oczekujacyPasazerowie'][grupa]['zrodlo'] == pietra:
-                for key, pasazerowie in zawartosc_pieter['oczekujacyPasazerowie'][grupa].items():
-                    for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
-                        statystyki['nieobsluzeni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
-        zawartosc_pieter['oczekujacyPasazerowie'].pop(grupa)
+        for grupa_key in list(zawartosc_pieter['oczekujacyPasazerowie'].keys()):
+            if zawartosc_pieter['oczekujacyPasazerowie'][grupa_key]['zrodlo'] == pietra:
+                for rodzaj, lista in zawartosc_pieter['oczekujacyPasazerowie'][grupa_key]['rodzaje_pasazerow'].items():
+                    statystyki['nieobsluzeni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
+                zawartosc_pieter['oczekujacyPasazerowie'].pop(grupa_key)
 
 
 def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
     if dane_symulacji['statusSymulacji'] == 1:
-
         wskażPiętro(celPasazerow, 1)
         zapiszWybranePiętro(celPasazerow, 1)
         #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
