@@ -139,8 +139,8 @@ def get_winda_status():
             'ostatniSerwis': windy_data.get('ostatniSerwis'),
             'predkoscWindy': windy_data.get('predkoscWindy')
         },
-        'wybrane_przyciski': wybrane_przyciski,
-        'wskazane_pietra': wskazane_pietra,
+        'wybrane_przyciski': wybrane_przyciski.get('słownik'),
+        'wskazane_pietra': wskazane_pietra.get('słownik'),
         'dane_symulacji': { 
             'status_symulacji': dane_symulacji.get('statusSymulacji'),
             'zmienna_częstotliwości_generowania_pasażerów': dane_symulacji.get('zmiennaCzęstotliwościGenerowaniaPasażerów'),
