@@ -361,7 +361,7 @@ def jazdaWindy():
         zmianaKierunkuJazdy()
         if windy_data['polecenia']:
             if windy_data['lokalizacjaWindy'] == windy_data['polecenia'][0]:
-                usunPiętroZListyWskazanychPieter(windy_data['polecenia'][0]) #testowo przeniesione na początek
+                usunPiętroZListyWskazanychPieter(windy_data['lokalizacjaWindy'])
                 windy_data['polecenia'].pop(0)
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
