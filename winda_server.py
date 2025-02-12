@@ -693,7 +693,7 @@ def wylosujPietroDoWylaczeniaZGenerowaniaPasazerow(liczbaPieter, klucz):
     for x in range(0, liczbaPieter):
         losowePietro = random.choice(wlasciwosci_windy['wielkośćSzybu'])
         #losowyKierunek = 1 #aktualnie wyłączane jest całe piętro; do ewentualnej zmiany na różnicowanie na kierunek jazdy (różnicowanie wartości na różne integer)
-        wylaczone_pietra['słownik'][losowePietro]
+        wylaczone_pietra['słownik'].extend([losowePietro])
         dane_symulacji['inicjatoryRuchuNegatywne'][klucz].update({'awariaKierunkuJazdy': losowePietro})
         if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'], list):
             dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'].append(losowePietro)
