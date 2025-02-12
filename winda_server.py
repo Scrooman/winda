@@ -336,8 +336,9 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
-    if lokalizacja in wskazane_pietra['słownik']:
-        wskazane_pietra['słownik'].pop(lokalizacja, 1) #testowo dodana wartość 1
+    lokalizacja = int(lokalizacja)
+    if int(lokalizacja) in wskazane_pietra['słownik']:
+        del wskazane_pietra['słownik'][lokalizacja]
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
