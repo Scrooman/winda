@@ -24,12 +24,15 @@ wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnoś
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
 wydarzenieLosowaniaInicjatoraPozytywnego = False
+losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora negatywnego
+wydarzenieLosowaniaInicjatoraNegatywnego = False
 DezaktywacjaInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
 wydarzenieDezaktywacjiInicjatoraPozytywnego = False
 
 
 jsonFilePathStatistics = '/data/statystyki_windy.json'
 jsonFilePathInicjatoryRuchu = '/data/inicjatory_ruchu.json'
+jsonFilePathInicjatoryRuchuNegatywne = '/data/inicjatory_negatywne_windy.json'
 BASE_URL = 'https://winda.onrender.com'
 URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
@@ -76,6 +79,14 @@ wskazane_pietra = { # dodać wysyłanie do strony
     'słownik': {}
 }
 
+wylaczone_pietra = {
+    'słownik': {}
+}
+
+wylaczone_przyciski = { 
+    'słownik': {}
+}
+
 zawartosc_pieter = {
     'oczekujacyPasazerowie': {}
 }
@@ -92,7 +103,8 @@ dane_symulacji = {
     'listaWagPieterDoWzywania': {},
     'listaWagPieterDoWybrania': {},
     'inicjatoryRuchu': {},
-    'dataZakonczeniaInicjatoraPozytywnego': None
+    'dataZakonczeniaInicjatoraPozytywnego': None,
+    'inicjatoryRuchuNegatywne': {}
 }
 
 listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
@@ -136,13 +148,20 @@ def get_winda_status():
             'lista_wag_pieter_do_wzywania': dane_symulacji.get('listaWagPieterDoWzywania'),
             'lista_wag_pieter_do_wybrania': dane_symulacji.get('listaWagPieterDoWybrania'),
             'inicjatory_ruchu': dane_symulacji.get('inicjatoryRuchu'),
-            'data_zakonczenia_inicjatora_pozytywnego': dane_symulacji.get('dataZakonczeniaInicjatoraPozytywnego')
+            'data_zakonczenia_inicjatora_pozytywnego': dane_symulacji.get('dataZakonczeniaInicjatoraPozytywnego'),
+            'inicjatory_ruchu_negatywne': dane_symulacji.get('inicjatoryRuchuNegatywne')
         },
         'wiezieni_pasazerowie': {
             'wiezieni_pasazerowie': zawartosc_windy.get('wiezieniPasazerowie')
         },
         'zawartosc_pieter': {
             'oczekujacy_pasazerowie': zawartosc_pieter.get('oczekujacyPasazerowie')
+        },
+        'wylaczone_pietra': {
+            'wylaczone_pietra': wylaczone_pietra.get('słownik')
+        },
+        'wylaczone_przyciski': {
+            'wylaczone_przyciski': wylaczone_przyciski.get('słownik')
         },
         'wlasciwosci_drzwi': {
             'polecenia_drzwi': wlasciwosci_drzwi.get('poleceniaDrzwi'),
@@ -178,13 +197,16 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    global wydarzenieLosowaniaInicjatoraPozytywnego
+    global wydarzenieLosowaniaInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
     aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraPozytywnego = True
-    threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start() # do zmiany na dane pobierane z JSON
+    threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start()
     losowanieInicjatoraPozytywnego.set()
+    wydarzenieLosowaniaInicjatoraNegatywnego = True
+    threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
+    losowanieInicjatoraNegatywnego.set()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -214,6 +236,11 @@ def odczytajStatystykiJSON():
                     "typ2": 0,
                     "typ3": 0
                 },
+                "nieobsluzeni_pasazerowie": {
+                    "typ1": 0,
+                    "typ2": 0,
+                    "typ3": 0
+                },
                 "liczba_otworzen_drzwi": 0,
                 "liczba_oczekujacych_pasazerow": 0
         }
@@ -228,6 +255,11 @@ def odczytajStatystykiJSON():
                 "typ2": 0,
                 "typ3": 0
             },
+            "nieobsluzeni_pasazerowie": {
+                    "typ1": 0,
+                    "typ2": 0,
+                    "typ3": 0
+                },
             "liczba_otworzen_drzwi": 0,
             "liczba_oczekujacych_pasazerow": 0
         }
@@ -262,16 +294,19 @@ def zaktualizujPolecenia():
 
 def wskażPiętro(nowePolecenie, źródłoPolecenia):
     if sprawdzCzyDubel(nowePolecenie, źródłoPolecenia) == False:
-        windy_data['polecenia'].append(nowePolecenie)
-        zaktualizujPolecenia()
-        #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
-        #wyświetlLogWWidżecie()
-        if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
-            windy_data['ruchWindy'] = True
-            threading.Thread(target=jazdaWindy, daemon=True).start()
-            wydarzenieJazda.set()
+        if nowePolecenie not in wylaczone_pietra['słownik'] and nowePolecenie not in wylaczone_przyciski['słownik']:
+            windy_data['polecenia'].append(nowePolecenie)
+            zaktualizujPolecenia()
+            #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
+            #wyświetlLogWWidżecie()
+            if windy_data.get('ruchWindy') is False and wlasciwosci_drzwi['statusPracyDrzwi'] == 2:
+                windy_data['ruchWindy'] = True
+                threading.Thread(target=jazdaWindy, daemon=True).start()
+                wydarzenieJazda.set()
+            else:
+                return
         else:
-            return 
+            return # do zmiany, aby zwracało komunikat o niedostępności piętra lub pietra
     else:
         return
 
@@ -301,7 +336,7 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     if lokalizacja in wskazane_pietra['słownik']:
-        wskazane_pietra['słownik'].pop(lokalizacja, None)
+        wskazane_pietra['słownik'].pop(lokalizacja, 1) #testowo dodana wartość 1
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
@@ -324,11 +359,11 @@ def jazdaWindy():
         zmianaKierunkuJazdy()
         if windy_data['polecenia']:
             if windy_data['lokalizacjaWindy'] == windy_data['polecenia'][0]:
+                usunPiętroZListyWskazanychPieter(windy_data['polecenia'][0]) #testowo przeniesione na początek
                 windy_data['polecenia'].pop(0)
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
                 usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
-                usunPiętroZListyWskazanychPieter(windy_data['lokalizacjaWindy'])
                 zapiszStatystykiPrzewiezionychPasazerow()
                 usunGrupePasazerowZWindy(windy_data['lokalizacjaWindy'])
                 celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
@@ -433,7 +468,7 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 #___________________________________________________________________________________________________________________________
 
 def aktywujDomyslnyInicjator():
-    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuZListy('idle', None)
+    inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuPozytywnyZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
 
 
@@ -454,7 +489,7 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1: 
-        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuZListy(None, unikalnoscInicjatora)
+        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
             klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
             for key in klucze_do_dezaktywacji:
@@ -481,7 +516,7 @@ def dezaktywujInicjator(kluczZdarzenia):
         pass
 
 
-def wybierzInicjatorRuchuZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
+def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
     global wydarzenieSymulacjaPodaży
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     if nazwaInicjatora is not None:
@@ -536,14 +571,15 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
 
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
-    global wydarzenieDezaktywacjiInicjatoraPozytywnego
+    global wydarzenieDezaktywacjiInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieDezaktywacjiInicjatoraPozytywnego == True:
         time.sleep(60)
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             dezaktywujInicjator(kluczInicjatora)
             DezaktywacjaInicjatoraPozytywnego.clear()
             wydarzenieDezaktywacjiInicjatoraPozytywnego = False
-            aktywujDomyslnyInicjator() 
+            aktywujDomyslnyInicjator()
+            wydarzenieLosowaniaInicjatoraPozytywnego = True
         else:
             pass
     
@@ -560,6 +596,120 @@ def pobierzInicjatoryRuchuJSON():
         print(f"Błąd dekodowania JSON: {e}")
         return {}
 
+
+def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
+    global wydarzenieLosowaniaInicjatoraNegatywnego
+    while wydarzenieLosowaniaInicjatoraNegatywnego == True:
+        if datetime.datetime.now().hour > 6 and datetime.datetime.now().hour < 23:
+            print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
+            if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
+                print("odwleczenie w czasie losowania inicjatora negatywnego")
+                losowaWartosc = random.randint(1100, 2100)
+                time.sleep(losowaWartosc)
+        else:
+            time.sleep(1300)
+
+
+def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
+    global wydarzenieLosowaniaInicjatoraNegatywnego
+    losowaWartosc = 1 #random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
+    if losowaWartosc == 1: 
+        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy("awaria_wezwania_windy", None) # testowo wskazany konkretny inicjator negatywny
+        if keyDoAktywacji is not None and valueDoAktywacji is not None:
+            print('rozpoczęto aktywację inicjatora negatywnego po unikalności')
+            aktywujInicjatorRuchuNegatywny(keyDoAktywacji, valueDoAktywacji)
+            losowanieInicjatoraNegatywnego.clear()
+            wydarzenieLosowaniaInicjatoraNegatywnego = False
+        else:
+            print('nie znaleziono inicjatora negatywnego po unikalności')
+            pass
+    else:
+        print("losowanie zakończone negatywnie")
+        return False
+    
+
+def wybierzInicjatorRuchuNegatywnyZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
+    global wydarzenieSymulacjaPodaży
+    inicjatoryRuchu = pobierzInicjatoryRuchuNegatywneJSON()
+    if nazwaInicjatora is not None:
+        for key, value in inicjatoryRuchu.items():
+            if nazwaInicjatora == key:
+                print("znaleziono inicjator negatywny po nazwie:", key)
+                return key, value
+    elif unikalnoscInicjatora is not None:
+        klucze_do_wylosowania = []
+        for key, value in inicjatoryRuchu.items():
+            if unikalnoscInicjatora == value.get('unikalnosc'):
+                klucze_do_wylosowania.append(key)
+                print("znaleziono inicjator negatywny po rodzaju:", unikalnoscInicjatora)
+        if len(klucze_do_wylosowania) > 0:
+            key = random.choice(klucze_do_wylosowania)
+            return key, inicjatoryRuchu[key]
+    print("nie znaleziono inicjatora negatywnego")
+    return None, None
+
+# funkcja do rozbudowania o kolejne inicjatory negatywne
+def aktywujInicjatorRuchuNegatywny(key, value):
+    print("uruchomiono inicjator negatywny", key)
+    dane_symulacji['inicjatoryRuchuNegatywne'][key] = value
+    liczbaPaneliWezwaniaPietra = value.get('awariaKierunkuJazdy') # 0 - nie ma awarii,  > 0 - liczba pięter ulegających awarii
+    if liczbaPaneliWezwaniaPietra is not None:
+        print("uruchamiany inicjator negatywny", key, "dla piętra")
+        wylosujPietroDoWylaczeniaZGenerowaniaPasazerow(liczbaPaneliWezwaniaPietra, key) # losowanie piętra, które ulegnie awarii
+    liczbaPrzyciskowWyboruPietra = value.get('awariaWybraniaPietra') # 0 - nie ma awarii,  > 0 - liczba przycisków ulegających awarii
+    if liczbaPrzyciskowWyboruPietra is not None:
+        print("uruchamiany inicjator negatywny", key, "dla panelu windy")
+        wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskowWyboruPietra, key) # TO DO: do zrobienia wyłączanie wybrania piętra
+
+
+def dezaktywujInicjatorNegatywny(kluczZdarzenia): # dodać przycisk usuwający na GUI na stronie
+    if kluczZdarzenia in dane_symulacji['inicjatoryRuchuNegatywne']:
+        print('dezaktywowano inicjator negatywny')
+        for key in wylaczone_pietra['słownik']:
+            if key in dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy'):
+                wylaczone_pietra['słownik'].pop(key)
+        dane_symulacji['inicjatoryRuchuNegatywne'].pop(kluczZdarzenia)
+    else:
+        pass
+
+
+def pobierzInicjatoryRuchuNegatywneJSON():  
+    try:
+        with open(jsonFilePathInicjatoryRuchuNegatywne, 'r') as json_file:
+            print("Plik z inicjatorami negatywnymi istnieje przy wczytaniu")
+            return json.load(json_file)
+    except FileNotFoundError:
+        print("Plik jsonFilePathInicjatoryRuchuNegatywne nie istnieje do wczytania.")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"Błąd dekodowania JSON: {e}")
+        return {}
+    
+
+def wylosujPietroDoWylaczeniaZGenerowaniaPasazerow(liczbaPieter, klucz):
+    if isinstance(liczbaPieter, list) and len(liczbaPieter) == 1:
+        liczbaPieter = liczbaPieter[0]
+    for x in range(0, liczbaPieter):
+        losowePietro = random.choice(wlasciwosci_windy['wielkośćSzybu'])
+        losowyKierunek = 1 #aktualnie wyłączane jest całe piętro; do ewentualnej zmiany na różnicowanie na kierunek jazdy (różnicowanie wartości na różne integer)
+        wylaczone_pietra['słownik'][int(losowePietro)] = losowyKierunek
+        dane_symulacji['inicjatoryRuchuNegatywne'][klucz].update({'awariaKierunkuJazdy': losowePietro})
+        if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'], list):
+            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'].append(losowePietro)
+        else:
+            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'] = [dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'], losowePietro]
+
+
+def wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskow, klucz): # TO DO: do zrobienia wyłączanie wybrania piętra
+    if isinstance(liczbaPrzyciskow, list) and len(liczbaPrzyciskow) == 1:
+        liczbaPrzyciskow = liczbaPrzyciskow[0]
+    for x in range(0, liczbaPrzyciskow):
+        losowyPrzycisk = random.choice(wlasciwosci_windy['wielkośćSzybu'])
+        wylaczone_przyciski['słownik'][int(losowyPrzycisk)] = 1
+        if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'], list):
+            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'].append(losowyPrzycisk)
+        else:
+            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'] = [dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'], losowyPrzycisk]
 
 #KOD GENEROWANIA PASAŻERÓW
 #___________________________________________________________________________________________________________________________
@@ -591,7 +741,7 @@ def generujPodażPasażerów():
         celPasazerow = generujCelPasazera(lokalizacjaPasażerów)
         kierunekJazdyPasażerów = zdefiniujKierunekJazdyPasażera(celPasazerow, lokalizacjaPasażerów)
         generujGrupePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów)
-        #aktualizujLiczbePasazerowNaPietrze(lokalizacjaPasażerów, liczbaPasazerow)
+        oznaczWygenerowanychPasazerowJakoNieobsluzonych() # do zmiany jako wydarzenie wątkowe, aby wyświetlać przez jakiś czas tych utraconych posażerów
         wskażPiętro(lokalizacjaPasażerów, kierunekJazdyPasażerów)
         if kierunekJazdyPasażerów > 1:
             zapiszWybranyPrzycisk(lokalizacjaPasażerów, kierunekJazdyPasażerów)
@@ -615,7 +765,7 @@ def generujLiczbePasazerowNaPiętrze():
 
 
 def generujLokalizacjePasazerow():
-    lokalizacjaPasazerow = random.choices(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWzywania'], k=1)[0] # w przyszłości do zmiany na zmienną definiującą pożądane źródła poleceń
+    lokalizacjaPasazerow = random.choices(wlasciwosci_windy['wielkośćSzybu'], weights=dane_symulacji['listaWagPieterDoWzywania'], k=1)[0]
     return lokalizacjaPasazerow
 
 
@@ -691,7 +841,17 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
         id, rodzaj = draw_character()
         zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][rodzaj].append(id)
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
-    
+            
+
+def oznaczWygenerowanychPasazerowJakoNieobsluzonych():
+    for pietra in wylaczone_pietra['słownik']: # weryfikacja czy grupa pasazerow zostala wygenerowana na wyłączonym piętrze
+        for grupa in zawartosc_pieter['oczekujacyPasazerowie'].keys():
+            if zawartosc_pieter['oczekujacyPasazerowie'][grupa]['zrodlo'] == pietra:
+                for key, pasazerowie in zawartosc_pieter['oczekujacyPasazerowie'][grupa].items():
+                    for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
+                        statystyki['nieobsluzeni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
+            zawartosc_pieter['oczekujacyPasazerowie'].pop(grupa)
+
 
 def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
@@ -783,5 +943,4 @@ statystyki = odczytajStatystykiJSON()
 liczbaPokonanychPięter = statystyki["pokonane_pietra"]
 przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
-statystykaPrzewiezieniPasażerowie = statystyki["przewiezieni_pasazerowie"]["typ1"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
