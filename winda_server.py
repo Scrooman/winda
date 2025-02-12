@@ -321,8 +321,9 @@ def zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia):
 
 
 def usunPiętroZListyWybranychPięter(lokalizacja):
-    if lokalizacja in wybrane_przyciski['słownik']:
-        wybrane_przyciski['słownik'].pop(lokalizacja, None)
+    lokalizacja = int(lokalizacja)
+    if int(lokalizacja) in wybrane_przyciski['słownik']:
+        del wybrane_przyciski['słownik'][lokalizacja]
 
 
 def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
