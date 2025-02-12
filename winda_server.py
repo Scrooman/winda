@@ -850,7 +850,7 @@ def oznaczWygenerowanychPasazerowJakoNieobsluzonych():
                 for key, pasazerowie in zawartosc_pieter['oczekujacyPasazerowie'][grupa].items():
                     for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
                         statystyki['nieobsluzeni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
-            zawartosc_pieter['oczekujacyPasazerowie'].pop(grupa)
+        zawartosc_pieter['oczekujacyPasazerowie'].pop(grupa)
 
 
 def symulujWybórPięter(celPasazerow):
