@@ -600,7 +600,7 @@ def pobierzInicjatoryRuchuJSON():
 def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraNegatywnego
     while wydarzenieLosowaniaInicjatoraNegatywnego == True:
-        if datetime.datetime.now().hour > 6 and datetime.datetime.now().hour < 23:
+        if datetime.datetime.now().hour > 5 and datetime.datetime.now().hour < 23:
             print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
             if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania inicjatora negatywnego")
