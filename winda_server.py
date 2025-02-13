@@ -737,6 +737,7 @@ def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMi
             generujPodażPasażerów()
             #dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = sredniRealnyCzasPomiedzyGenerowaniem - j.w.
         else:
+            time.sleep(int(losowaWartoscOpoznienia))
             pass
 
 def generujPodażPasażerów():
