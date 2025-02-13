@@ -292,9 +292,9 @@ def zaktualizujPolecenia():
     zmianaKierunkuJazdy()
 
 
-def wskażPiętro(nowePolecenie, źródłoPolecenia):
+def wskażPiętro(nowePolecenie, źródłoPolecenia): # do zmiany, aby nie bylo mozliwe dodanie pietra na ktorym znajduje sie klient - ale to raczej zmiana do generowania pasazerow
     if sprawdzCzyDubel(nowePolecenie, źródłoPolecenia) == False:
-        if nowePolecenie not in wylaczone_pietra['słownik'] and nowePolecenie not in wylaczone_przyciski['słownik']:
+        if nowePolecenie not in wylaczone_pietra['słownik'] and nowePolecenie not in wylaczone_przyciski['słownik']: # do weryfikacji i zmiany jesli pasazer wybierze wylaczone pietro lub przycisk
             windy_data['polecenia'].append(nowePolecenie)
             zaktualizujPolecenia()
             #zapiszLog(1, źródłoPolecenia, None, nowePolecenie, polecenia, None, typUsera)
@@ -306,9 +306,9 @@ def wskażPiętro(nowePolecenie, źródłoPolecenia):
             else:
                 return
         else:
-            return # do zmiany, aby zwracało komunikat o niedostępności piętra lub pietra
+            return False # do zmiany, aby zwracało komunikat o niedostępności piętra lub pietra
     else:
-        return
+        return False
 
 
 def zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia):
@@ -863,8 +863,8 @@ def oznaczWygenerowanychPasazerowJakoNieobsluzonych():
 def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
     if dane_symulacji['statusSymulacji'] == 1:
-        wskażPiętro(celPasazerow, 1)
-        zapiszWskazanePiętro(celPasazerow, 1)
+        if wskażPiętro(celPasazerow, 1) != False:
+            zapiszWskazanePiętro(celPasazerow, 1)
         #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
         #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
         #statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
