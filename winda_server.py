@@ -321,9 +321,11 @@ def zapiszWybranyPrzycisk(nowePolecenie, źródłoPolecenia):
 
 
 def usunPiętroZListyWybranychPięter(lokalizacja):
+    print("usuwam piętro z listy wybranych pięter")
     lokalizacja = int(lokalizacja)
-    if int(lokalizacja) in wybrane_przyciski['słownik']:
+    if lokalizacja in wybrane_przyciski['słownik']:
         del wybrane_przyciski['słownik'][lokalizacja]
+        print("usunięto piętro z listy wybranych pięter")
 
 
 def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
@@ -336,9 +338,11 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
+    print("usuwam piętro z listy wskazanych pięter")
     lokalizacja = int(lokalizacja)
-    if int(lokalizacja) in wskazane_pietra['słownik']:
+    if lokalizacja in wskazane_pietra['słownik']:
         del wskazane_pietra['słownik'][lokalizacja]
+        print("usunięto piętro z listy wskazanych pięter")
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
@@ -361,11 +365,12 @@ def jazdaWindy():
         zmianaKierunkuJazdy()
         if windy_data['polecenia']:
             if windy_data['lokalizacjaWindy'] == windy_data['polecenia'][0]:
+                print("Winda zatrzymała się na piętrze", windy_data['lokalizacjaWindy'])
                 usunPiętroZListyWskazanychPieter(windy_data['lokalizacjaWindy'])
+                usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
                 windy_data['polecenia'].pop(0)
                 liczbaPrzystanków += 1
                 statystyki['zaliczone_przystanki'] = liczbaPrzystanków
-                usunPiętroZListyWybranychPięter(windy_data['lokalizacjaWindy'])
                 zapiszStatystykiPrzewiezionychPasazerow()
                 usunGrupePasazerowZWindy(windy_data['lokalizacjaWindy'])
                 celPasazera = pobierzCelGrupyPasazerow(windy_data['lokalizacjaWindy'])
