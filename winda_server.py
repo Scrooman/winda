@@ -333,15 +333,15 @@ def zapiszWskazanePiętro(nowePolecenie, źródłoPolecenia):
         wskazane_pietra['słownik'] = {}
     if not isinstance(wskazane_pietra.get('słownik'), dict):
         wskazane_pietra['słownik'] = {}
-    klucz = int(nowePolecenie)
+    klucz = str(nowePolecenie)
     wskazane_pietra['słownik'].update({klucz: źródłoPolecenia})
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = int(lokalizacja)
-    if lokalizacja in wskazane_pietra['słownik']:
-        del wskazane_pietra['słownik'][lokalizacja]
+    lokalizacja = str(lokalizacja)
+    if str(lokalizacja) in wskazane_pietra['słownik']:
+        del wskazane_pietra['słownik'][str(lokalizacja)]
         print("usunięto piętro z listy wskazanych pięter")
 
 
