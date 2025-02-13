@@ -333,16 +333,16 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
         wskazane_pietra['słownik'] = {}
     if not isinstance(wybrane_przyciski.get('słownik'), dict):
         wskazane_pietra['słownik'] = {}
-    klucz = int(nowePolecenie)
-    wskazane_pietra['słownik'].update({klucz: źródłoPolecenia})
+    #klucz = int(nowePolecenie)
+    wskazane_pietra['słownik'].update({nowePolecenie: źródłoPolecenia})
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
     lokalizacja = str(lokalizacja)
-    #if lokalizacja in wskazane_pietra['słownik']:
-    del wskazane_pietra['słownik'][lokalizacja]
-    print("usunięto piętro z listy wskazanych pięter", wskazane_pietra['słownik'][lokalizacja])
+    if lokalizacja in wskazane_pietra['słownik']:
+        del wskazane_pietra['słownik'][lokalizacja]
+        print("usunięto piętro z listy wskazanych pięter", wskazane_pietra['słownik'][lokalizacja])
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
