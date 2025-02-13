@@ -339,7 +339,7 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = int(lokalizacja)
+    lokalizacja = str(lokalizacja)
     if lokalizacja in wskazane_pietra['słownik']:
         del wskazane_pietra['słownik'][lokalizacja]
         print("usunięto piętro z listy wskazanych pięter")
@@ -607,7 +607,7 @@ def pobierzInicjatoryRuchuJSON():
 def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraNegatywnego
     while wydarzenieLosowaniaInicjatoraNegatywnego == True:
-        if datetime.datetime.now().hour > 5 and datetime.datetime.now().hour < 23:
+        if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23:
             print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
             if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania inicjatora negatywnego")
@@ -636,7 +636,6 @@ def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
     
 
 def wybierzInicjatorRuchuNegatywnyZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
-    global wydarzenieSymulacjaPodaży
     inicjatoryRuchu = pobierzInicjatoryRuchuNegatywneJSON()
     if nazwaInicjatora is not None:
         for key, value in inicjatoryRuchu.items():
