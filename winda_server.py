@@ -328,7 +328,7 @@ def usunPiętroZListyWybranychPięter(lokalizacja):
         print("usunięto piętro z listy wybranych pięter")
 
 
-def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
+def zapiszWskazanePiętro(nowePolecenie, źródłoPolecenia):
     if 'słownik' not in wskazane_pietra:
         wskazane_pietra['słownik'] = {}
     if not isinstance(wskazane_pietra.get('słownik'), dict):
@@ -339,11 +339,11 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = str(lokalizacja)
-    klucze_do_usuniecia = [key for key in wskazane_pietra['słownik'] if wskazane_pietra['słownik'][key] == lokalizacja]
-    for key in klucze_do_usuniecia:
-        del wskazane_pietra['słownik'][key]
-        print(f"usunięto piętro {key} z listy wskazanych pięter")
+    lokalizacja = int(lokalizacja)
+    if lokalizacja in wskazane_pietra['słownik']:
+        del wskazane_pietra['słownik'][lokalizacja]
+        print("usunięto piętro z listy wskazanych pięter")
+
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
@@ -864,7 +864,7 @@ def symulujWybórPięter(celPasazerow):
     global liczbaOczekującychPasażerów
     if dane_symulacji['statusSymulacji'] == 1:
         wskażPiętro(celPasazerow, 1)
-        zapiszWybranePiętro(celPasazerow, 1)
+        zapiszWskazanePiętro(celPasazerow, 1)
         #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
         #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
         #statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
