@@ -516,11 +516,14 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
 
 
 def dezaktywujInicjator(kluczZdarzenia):
+    print("rozpoczynam dezaktywację inicjatora pozytywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
+        print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
         wydarzenieSymulacjaPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
+        print("nie dezaktywuję inicjatora pozytywnego")
         pass
 
 
