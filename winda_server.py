@@ -340,9 +340,10 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
     lokalizacja = str(lokalizacja)
-    if lokalizacja in wskazane_pietra['słownik']:
-        del wskazane_pietra['słownik'][lokalizacja]
-        print("usunięto piętro z listy wskazanych pięter", wskazane_pietra['słownik'][lokalizacja])
+    klucze_do_usuniecia = [key for key in wskazane_pietra['słownik'] if wskazane_pietra['słownik'][key] == lokalizacja]
+    for key in klucze_do_usuniecia:
+        del wskazane_pietra['słownik'][key]
+        print(f"usunięto piętro {key} z listy wskazanych pięter")
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
