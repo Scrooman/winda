@@ -339,10 +339,10 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = str(lokalizacja)
-    if lokalizacja in wskazane_pietra['słownik']:
-        del wskazane_pietra['słownik'][lokalizacja]
-        print("usunięto piętro z listy wskazanych pięter")
+    lokalizacja = int(lokalizacja)
+    #if lokalizacja in wskazane_pietra['słownik']:
+    del wskazane_pietra['słownik'][lokalizacja]
+    print("usunięto piętro z listy wskazanych pięter", wskazane_pietra['słownik'][lokalizacja])
 
 
 def sprawdzCzyDubel(nowePolecenie, źródłoPolecenia):
@@ -482,7 +482,7 @@ def aktywujDomyslnyInicjator():
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
     while wydarzenieLosowaniaInicjatoraPozytywnego == True:
-        if datetime.datetime.now().hour > 6 and datetime.datetime.now().hour < 23:
+        if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23: # testowe wartości
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
@@ -494,8 +494,8 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = random.randint(1, 3)
-    if losowaWartosc == 1: 
+    losowaWartosc = 1 # random.randint(1, 3) #testowo zmienioneowe
+    if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
             klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
@@ -568,7 +568,7 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=(10)) #testowo zmienione datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
