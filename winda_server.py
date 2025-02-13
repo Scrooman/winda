@@ -339,7 +339,7 @@ def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = int(lokalizacja)
+    lokalizacja = str(lokalizacja)
     klucze_do_usuniecia = [key for key in wskazane_pietra['słownik'] if wskazane_pietra['słownik'][key] == lokalizacja]
     for key in klucze_do_usuniecia:
         del wskazane_pietra['słownik'][key]
