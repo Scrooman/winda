@@ -331,15 +331,15 @@ def usunPiętroZListyWybranychPięter(lokalizacja):
 def zapiszWybranePiętro(nowePolecenie, źródłoPolecenia):
     if 'słownik' not in wskazane_pietra:
         wskazane_pietra['słownik'] = {}
-    if not isinstance(wybrane_przyciski.get('słownik'), dict):
+    if not isinstance(wskazane_pietra.get('słownik'), dict):
         wskazane_pietra['słownik'] = {}
-    #klucz = int(nowePolecenie)
-    wskazane_pietra['słownik'].update({nowePolecenie: źródłoPolecenia})
+    klucz = int(nowePolecenie)
+    wskazane_pietra['słownik'].update({klucz: źródłoPolecenia})
 
 
 def usunPiętroZListyWskazanychPieter(lokalizacja):
     print("usuwam piętro z listy wskazanych pięter")
-    lokalizacja = str(lokalizacja)
+    lokalizacja = int(lokalizacja)
     klucze_do_usuniecia = [key for key in wskazane_pietra['słownik'] if wskazane_pietra['słownik'][key] == lokalizacja]
     for key in klucze_do_usuniecia:
         del wskazane_pietra['słownik'][key]
