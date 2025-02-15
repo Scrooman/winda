@@ -204,9 +204,11 @@ def wlacz_wylacz_symulacje():
     wydarzenieLosowaniaInicjatoraPozytywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start()
     losowanieInicjatoraPozytywnego.set()
+    losowanieInicjatoraPozytywnego.clear()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
     losowanieInicjatoraNegatywnego.set()
+    losowanieInicjatoraNegatywnego.clear()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -520,6 +522,7 @@ def dezaktywujInicjator(kluczZdarzenia):
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
         print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
+        wydarzenieSymulacjaPodaży.set()
         wydarzenieSymulacjaPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
@@ -545,12 +548,14 @@ def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjat
             key = random.choice(klucze_do_wylosowania)
             return key, inicjatoryRuchu[key]
     print("nie znaleziono inicjatora")
+    wydarzenieSymulacjaPodaży.set()
     wydarzenieSymulacjaPodaży.clear()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
     return None, None
 
 
 def aktywujInicjatorRuchu(key, value):
+    global wydarzenieSymulacjaPodaży
     print("uruchomiono inicjator", key)
     dane_symulacji['inicjatoryRuchu'][key] = value
     trybPracy = value.get('trybPracy')
@@ -564,8 +569,9 @@ def aktywujInicjatorRuchu(key, value):
     wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
     print("uruchamiany inicjator dla:", trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
     dane_symulacji['wydarzenieStatusSymulacji'] = True
-    threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True).start() # do zmiany na dane pobierane z JSON
-    wydarzenieSymulacjaPodaży.set()  
+    wydarzenieSymulacjaPodaży = threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True)
+    wydarzenieSymulacjaPodaży.start() # do zmiany na dane pobierane z JSON
+
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
