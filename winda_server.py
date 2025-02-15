@@ -20,7 +20,8 @@ from flask_cors import CORS
 wydarzenieZapisywaniaStatystyk = False
 wydarzenieJazda = threading.Event() # Event do zarządzania aktywnością wątku jazdaWindy
 wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością wątku pracaDrzwi
-wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
+#wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
+zatrzymanieSymulacjiPodaży = threading.Event() # Event do zarządzania aktywnością wątku zatrzymania symulacji podaży    
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
 wydarzenieLosowaniaInicjatoraPozytywnego = False
@@ -518,14 +519,13 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
 
 
 def dezaktywujInicjator(kluczZdarzenia):
-    global wydarzenieSymulacjaPodaży
+    global zatrzymanieSymulacjiPodaży
     print("rozpoczynam dezaktywację inicjatora pozytywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
         print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
-        wydarzenieSymulacjaPodaży = threading.Event()
-        wydarzenieSymulacjaPodaży.set()
-        wydarzenieSymulacjaPodaży.clear()
+        zatrzymanieSymulacjiPodaży.set()
+        zatrzymanieSymulacjiPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
         print("nie dezaktywuję inicjatora pozytywnego")
@@ -533,7 +533,7 @@ def dezaktywujInicjator(kluczZdarzenia):
 
 
 def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjatora=None):
-    global wydarzenieSymulacjaPodaży
+    global wydarzenieSymulacjaPodaży, zatrzymanieSymulacjiPodaży
     inicjatoryRuchu = pobierzInicjatoryRuchuJSON()
     if nazwaInicjatora is not None:
         for key, value in inicjatoryRuchu.items():
@@ -550,9 +550,8 @@ def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjat
             key = random.choice(klucze_do_wylosowania)
             return key, inicjatoryRuchu[key]
     print("nie znaleziono inicjatora")
-    wydarzenieSymulacjaPodaży = threading.Event()
-    wydarzenieSymulacjaPodaży.set()
-    wydarzenieSymulacjaPodaży.clear()
+    zatrzymanieSymulacjiPodaży.set()
+    zatrzymanieSymulacjiPodaży.clear()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
     return None, None
 
