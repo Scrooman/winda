@@ -632,7 +632,7 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
 
 def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraNegatywnego
-    losowaWartosc = random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
+    losowaWartosc = 1 # testowo random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy("awaria_wezwania_windy", None) # testowo wskazany konkretny inicjator negatywny
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
