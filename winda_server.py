@@ -498,7 +498,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = 1 # random.randint(1, 3) #testowo zmienioneowe
+    losowaWartosc = random.randint(1, 3) #testowo zmienioneowe
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -581,7 +581,7 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=(10)) #testowo zmienione datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
@@ -632,7 +632,7 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
 
 def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraNegatywnego
-    losowaWartosc = 1 #random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
+    losowaWartosc = random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy("awaria_wezwania_windy", None) # testowo wskazany konkretny inicjator negatywny
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -708,15 +708,21 @@ def pobierzInicjatoryRuchuNegatywneJSON():
 def wylosujPietroDoWylaczeniaZGenerowaniaPasazerow(liczbaPieter, klucz):
     if isinstance(liczbaPieter, list) and len(liczbaPieter) == 1:
         liczbaPieter = liczbaPieter[0]
-    for x in range(0, liczbaPieter):
         losowePietro = random.choice(wlasciwosci_windy['wielkośćSzybu'])
-        #losowyKierunek = 1 #aktualnie wyłączane jest całe piętro; do ewentualnej zmiany na różnicowanie na kierunek jazdy (różnicowanie wartości na różne integer)
         wylaczone_pietra['słownik'].extend([losowePietro])
         dane_symulacji['inicjatoryRuchuNegatywne'][klucz].update({'awariaKierunkuJazdy': losowePietro})
-        if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaWybraniaPietra'], list):
+        if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'], list):
             dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'].append(losowePietro)
         else:
-            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'] = [dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'], losowePietro]
+            dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'] = [losowePietro]
+    else:
+        for x in range(0, liczbaPieter):
+            losowePietro = random.choice(wlasciwosci_windy['wielkośćSzybu'])
+            wylaczone_pietra['słownik'].extend([losowePietro])
+            if isinstance(dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'], list):
+                dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'].append(losowePietro)
+            else:
+                dane_symulacji['inicjatoryRuchuNegatywne'][klucz]['awariaKierunkuJazdy'] = [losowePietro]
 
 
 def wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskow, klucz): # TO DO: do zrobienia wyłączanie wybrania piętra
