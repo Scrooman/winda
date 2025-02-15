@@ -525,6 +525,7 @@ def dezaktywujInicjator(kluczZdarzenia):
         print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
         zatrzymanieSymulacjiPodaży.set()
+        wydarzenieSymulacjaPodaży.join()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
         print("nie dezaktywuję inicjatora pozytywnego")
@@ -550,6 +551,7 @@ def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjat
             return key, inicjatoryRuchu[key]
     print("nie znaleziono inicjatora")
     zatrzymanieSymulacjiPodaży.set()
+    wydarzenieSymulacjaPodaży.join()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
     return None, None
 
