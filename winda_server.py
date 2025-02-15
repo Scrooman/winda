@@ -735,7 +735,7 @@ def wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskow, klucz): # TO DO: d
 
 # 0 - idle, 1 - zmieniony_zdarzeniem, 2 - tbd
 def dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia):
-    while dane_symulacji.get('wydarzenieStatusSymulacji') == True:
+    while not zatrzymanieSymulacjiPodaży.is_set():
         if trybPracy == 0 and len(windy_data['polecenia']) < limitPolecen: # nowe piętro dodawane jest wtedy kiedy lista zadań pusta
             print("losuj pasażera dla trybu pracy 0", trybPracy)
             losowaWartoscOpoznienia = random.randint(zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
