@@ -525,7 +525,6 @@ def dezaktywujInicjator(kluczZdarzenia):
         print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
         dane_symulacji['inicjatoryRuchu'].pop(kluczZdarzenia)
         zatrzymanieSymulacjiPodaży.set()
-        zatrzymanieSymulacjiPodaży.clear()
         dane_symulacji['wydarzenieStatusSymulacji'] = False
     else:
         print("nie dezaktywuję inicjatora pozytywnego")
@@ -551,7 +550,6 @@ def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjat
             return key, inicjatoryRuchu[key]
     print("nie znaleziono inicjatora")
     zatrzymanieSymulacjiPodaży.set()
-    zatrzymanieSymulacjiPodaży.clear()
     dane_symulacji['wydarzenieStatusSymulacji'] = False
     return None, None
 
@@ -571,6 +569,7 @@ def aktywujInicjatorRuchu(key, value):
     wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
     print("uruchamiany inicjator dla:", trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
     dane_symulacji['wydarzenieStatusSymulacji'] = True
+    zatrzymanieSymulacjiPodaży.clear()
     wydarzenieSymulacjaPodaży = threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True)
     wydarzenieSymulacjaPodaży.start() # do zmiany na dane pobierane z JSON
 
