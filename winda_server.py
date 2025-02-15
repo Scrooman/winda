@@ -220,6 +220,17 @@ def zmien_czestotliwosc():
     dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów'] = int(request.json.get('zmiennaCzęstotliwościGenerowaniaPasażerów'))
     return jsonify({'zmiennaCzęstotliwościGenerowaniaPasażerów': dane_symulacji['zmiennaCzęstotliwościGenerowaniaPasażerów']})
 
+
+@app.route('/dezaktywuj_inicjator_negatywny', methods=['DELETE'])
+def dezaktywujInicjatorNegatywny():
+    data = request.get_json()
+    kluczZdarzenia = data.get('kluczZdarzenia')
+    if kluczZdarzenia:
+        dezaktywujInicjatorNegatywny(kluczZdarzenia)
+        return jsonify({"message": "Inicjator negatywny dezaktywowany"}), 200
+    else:
+        return jsonify({"error": "Brak klucza zdarzenia"}), 400
+
 # KOD STATYSTYK
 #___________________________________________________________________________________________________________________________
 
@@ -498,7 +509,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = random.randint(1, 3) #testowo zmienioneowe
+    losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
