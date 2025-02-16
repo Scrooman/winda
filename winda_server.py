@@ -501,15 +501,15 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
-                losowaWartosc = random.randint(1600, 2600)
+                losowaWartosc = 10 # testowo random.randint(1600, 2600)
                 time.sleep(losowaWartosc)
         else:
-            time.sleep(1800)
+            time.sleep(10) # testowowo time.sleep(1800)
 
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
     global wydarzenieLosowaniaInicjatoraPozytywnego
-    losowaWartosc = random.randint(1, 3)
+    losowaWartosc = 1 # testowo random.randint(1, 3)
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -592,7 +592,7 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
     global wydarzenieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #testowo datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         wydarzenieDezaktywacjiInicjatoraPozytywnego = True
         DezaktywacjaInicjatoraPozytywnego.set()
         threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
@@ -635,10 +635,10 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
             print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
             if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania inicjatora negatywnego")
-                losowaWartosc = random.randint(1100, 2100)
+                losowaWartosc = 10 # testowo random.randint(1100, 2100)
                 time.sleep(losowaWartosc)
         else:
-            time.sleep(1300)
+            time.sleep(10) #testowow time.sleep(1300)
 
 
 def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
