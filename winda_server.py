@@ -23,12 +23,12 @@ wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością w
 #wydarzenieSymulacjaPodaży = threading.Event() # Event do zarządzania aktywnością wątku symulacji podaży
 zatrzymanieSymulacjiPodaży = threading.Event() # Event do zarządzania aktywnością wątku zatrzymania symulacji podaży    
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
-losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
-wydarzenieLosowaniaInicjatoraPozytywnego = False
+#losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
+zatrzymanieLosowaniaInicjatoraPozytywnego = threading.Event()
 losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora negatywnego
 wydarzenieLosowaniaInicjatoraNegatywnego = False
-DezaktywacjaInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
-wydarzenieDezaktywacjiInicjatoraPozytywnego = False
+#sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
+zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
 
 
 jsonFilePathStatistics = '/data/statystyki_windy.json'
@@ -200,16 +200,6 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global wydarzenieLosowaniaInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
-    aktywujDomyslnyInicjator()
-    aktywujZapisywanieStatystyk()
-    wydarzenieLosowaniaInicjatoraPozytywnego = True
-    threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True).start()
-    losowanieInicjatoraPozytywnego.set()
-    losowanieInicjatoraPozytywnego.clear()
-    wydarzenieLosowaniaInicjatoraNegatywnego = True
-    threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
-    losowanieInicjatoraNegatywnego.set()
-    losowanieInicjatoraNegatywnego.clear()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -490,13 +480,15 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 #___________________________________________________________________________________________________________________________
 
 def aktywujDomyslnyInicjator():
+    global losowanieInicjatoraPozytywnego, zatrzymanieLosowaniaInicjatoraPozytywnego
     inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuPozytywnyZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
+    zatrzymanieLosowaniaInicjatoraPozytywnego.clear()
+    losowanieInicjatoraPozytywnego.start()
 
 
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
-    global wydarzenieLosowaniaInicjatoraPozytywnego
-    while wydarzenieLosowaniaInicjatoraPozytywnego == True:
+    while not zatrzymanieLosowaniaInicjatoraPozytywnego.is_set():
         if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23: # testowe wartości
             print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
@@ -508,7 +500,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
 
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
-    global wydarzenieLosowaniaInicjatoraPozytywnego
+    global zatrzymanieLosowaniaInicjatoraPozytywnego, losowanieInicjatoraPozytywnego
     losowaWartosc = 1 # testowo random.randint(1, 3)
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
@@ -519,8 +511,8 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
                 dezaktywujInicjator(key)
             print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
             aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
-            losowanieInicjatoraPozytywnego.clear()
-            wydarzenieLosowaniaInicjatoraPozytywnego = False
+            zatrzymanieLosowaniaInicjatoraPozytywnego.set()
+            losowanieInicjatoraPozytywnego.join()
         else:
             print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
@@ -530,7 +522,7 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
 
 
 def dezaktywujInicjator(kluczZdarzenia):
-    global zatrzymanieSymulacjiPodaży
+    global zatrzymanieSymulacjiPodaży, wydarzenieSymulacjaPodaży
     print("rozpoczynam dezaktywację inicjatora pozytywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchu']:
         print("Dezaktywuję inicjator pozytywny", kluczZdarzenia)
@@ -568,7 +560,7 @@ def wybierzInicjatorRuchuPozytywnyZListy(nazwaInicjatora=None, unikalnoscInicjat
 
 
 def aktywujInicjatorRuchu(key, value):
-    global wydarzenieSymulacjaPodaży
+    global wydarzenieSymulacjaPodaży, zatrzymanieSymulacjiPodaży
     print("uruchomiono inicjator", key)
     dane_symulacji['inicjatoryRuchu'][key] = value
     trybPracy = value.get('trybPracy')
@@ -589,28 +581,27 @@ def aktywujInicjatorRuchu(key, value):
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
-    global wydarzenieDezaktywacjiInicjatoraPozytywnego
+    global zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
         dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #testowo datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
-        wydarzenieDezaktywacjiInicjatoraPozytywnego = True
-        DezaktywacjaInicjatoraPozytywnego.set()
-        threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True).start()
+        zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.clear()
+        sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True)
+        sprawdzanieDezaktywacjiInicjatoraPozytywnego.start()
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
     dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] = dataZakonczeniaInicjatoraPozytywnego
 
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
-    global wydarzenieDezaktywacjiInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraPozytywnego
-    while wydarzenieDezaktywacjiInicjatoraPozytywnego == True:
+    global zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
+    while not zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.is_set():
         time.sleep(60)
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             dezaktywujInicjator(kluczInicjatora)
-            DezaktywacjaInicjatoraPozytywnego.clear()
-            wydarzenieDezaktywacjiInicjatoraPozytywnego = False
+            zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.set()
+            sprawdzanieDezaktywacjiInicjatoraPozytywnego.join()
             aktywujDomyslnyInicjator()
-            wydarzenieLosowaniaInicjatoraPozytywnego = True
         else:
             pass
     
@@ -980,3 +971,12 @@ liczbaPokonanychPięter = statystyki["pokonane_pietra"]
 przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
+
+aktywujDomyslnyInicjator()
+aktywujZapisywanieStatystyk()
+losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
+losowanieInicjatoraPozytywnego.start()
+wydarzenieLosowaniaInicjatoraNegatywnego = True
+threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
+losowanieInicjatoraNegatywnego.set()
+losowanieInicjatoraNegatywnego.clear()
