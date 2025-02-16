@@ -28,8 +28,10 @@ zatrzymanieLosowaniaInicjatoraPozytywnego = threading.Event()
 losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora negatywnego
 wydarzenieLosowaniaInicjatoraNegatywnego = False
 #sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
-zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
+#zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
 losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
+sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True)
+
 
 
 
@@ -200,9 +202,10 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
+    global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
+    sprawdzanieDezaktywacjiInicjatoraPozytywnego.start()
     aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
@@ -587,28 +590,22 @@ def aktywujInicjatorRuchu(key, value):
 
 
 
-def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
-    global zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
+def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
         dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #testowo datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
-        zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.clear()
-        sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True)
-        sprawdzanieDezaktywacjiInicjatoraPozytywnego.start()
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
     dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] = dataZakonczeniaInicjatoraPozytywnego
 
 
-def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
-    global zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
-    while not zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.is_set():
-        time.sleep(60)
-        if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
-            dezaktywujInicjator(kluczInicjatora)
-            zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.set()
-            sprawdzanieDezaktywacjiInicjatoraPozytywnego.join()
-            aktywujDomyslnyInicjator()
+def dezaktywujInicjatorPozytywnyPoZakonczeniu():
+    while True:
+        time.sleep(10) # testowo
+        if dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] is not None and datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
+            for key in dane_symulacji['inicjatoryRuchu'].keys():
+                dezaktywujInicjator(key)
+                aktywujDomyslnyInicjator()
         else:
             pass
     
