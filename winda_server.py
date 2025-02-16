@@ -200,6 +200,14 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global wydarzenieLosowaniaInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
+    aktywujDomyslnyInicjator()
+    aktywujZapisywanieStatystyk()
+    losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
+    losowanieInicjatoraPozytywnego.start()
+    wydarzenieLosowaniaInicjatoraNegatywnego = True
+    threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
+    losowanieInicjatoraNegatywnego.set()
+    losowanieInicjatoraNegatywnego.clear()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -971,12 +979,3 @@ liczbaPokonanychPięter = statystyki["pokonane_pietra"]
 przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-
-aktywujDomyslnyInicjator()
-aktywujZapisywanieStatystyk()
-losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
-losowanieInicjatoraPozytywnego.start()
-wydarzenieLosowaniaInicjatoraNegatywnego = True
-threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
-losowanieInicjatoraNegatywnego.set()
-losowanieInicjatoraNegatywnego.clear()
