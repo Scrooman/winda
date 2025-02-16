@@ -601,9 +601,12 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu():
     while True:
+        print("Sprawdzam inicjatory pozytywne do dezaktywacji")
         time.sleep(10) # testowo
         if dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] is not None and datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
+            print("rozpoczęto dezaktywację inicjatorów pozytywnych")
             for key in dane_symulacji['inicjatoryRuchu'].keys():
+                print("dezaktywuję inicjator pozytywny", key)
                 dezaktywujInicjator(key)
                 aktywujDomyslnyInicjator()
         else:
