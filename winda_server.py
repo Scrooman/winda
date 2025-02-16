@@ -24,12 +24,13 @@ wydarzeniePracaDrzwi = threading.Event() # Event do zarządzania aktywnością w
 zatrzymanieSymulacjiPodaży = threading.Event() # Event do zarządzania aktywnością wątku zatrzymania symulacji podaży    
 zapisywanieStatystyk = threading.Event() # Event do zarządzania aktywnością wątku zapisywania statystyk
 #losowanieInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora pozytywnego
-zatrzymanieLosowaniaInicjatoraPozytywnego = threading.Event()
-losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora negatywnego
-wydarzenieLosowaniaInicjatoraNegatywnego = False
+#zatrzymanieLosowaniaInicjatoraPozytywnego = threading.Event()
+#losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktywnością wątku losowania inicjatora negatywnego
+#wydarzenieLosowaniaInicjatoraNegatywnego = False
 #sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
 #zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
 losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
+losowanieInicjatoraNegatywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True)
 
 
 
@@ -201,16 +202,13 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    global wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
+    global losowanieInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
     losowanieInicjatoraPozytywnego.start()
     sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
     aktywujZapisywanieStatystyk()
-    wydarzenieLosowaniaInicjatoraNegatywnego = True
-    threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
-    losowanieInicjatoraNegatywnego.set()
-    losowanieInicjatoraNegatywnego.clear()
+    losowanieInicjatoraNegatywnego.start()
     return jsonify({'statusSymulacji': dane_symulacji['statusSymulacji']})
 if __name__ == '__main__':
     app.run(debug=True)
@@ -503,16 +501,16 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
                 print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
-                losowaWartosc = 10 # testowo random.randint(1600, 2600)
+                losowaWartosc = random.randint(1600, 2600)
                 time.sleep(losowaWartosc)
         else:
             print("Aktywny pozytywny inicjator ruchu - nie losuję")
-            time.sleep(10) # testowowo time.sleep(1800)
+            time.sleep(1800)
 
 
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
-    losowaWartosc = 1 # testowo random.randint(1, 3)
+    losowaWartosc = random.randint(1, 3)
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
@@ -600,7 +598,7 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu():
     while True:
-        time.sleep(10)  # testowo
+        time.sleep(60)  # testowo
         print("Sprawdzam inicjatory pozytywne do dezaktywacji")
         if dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] is not None and datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             print("rozpoczęto dezaktywację inicjatorów pozytywnych")
@@ -628,28 +626,30 @@ def pobierzInicjatoryRuchuJSON():
 
 
 def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
-    global wydarzenieLosowaniaInicjatoraNegatywnego
-    while wydarzenieLosowaniaInicjatoraNegatywnego == True:
-        if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23:
-            print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
-            if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
-                print("odwleczenie w czasie losowania inicjatora negatywnego")
-                losowaWartosc = 10 # testowo random.randint(1100, 2100)
-                time.sleep(losowaWartosc)
+    while True:
+        if dane_symulacji['inicjatoryRuchuNegatywne']:
+            print("Aktywny negatywny inicjator - nie losuję")
+            time.sleep(5) #testowow time.sleep(1300)
         else:
-            time.sleep(10) #testowow time.sleep(1300)
+            print("Incijator negatywny nie aktywny - sprawdzam warunki do losowania")
+            if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23:
+                print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
+                if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
+                    print("odwleczenie w czasie losowania inicjatora negatywnego")
+                    losowaWartosc = 10 # testowo random.randint(1100, 2100)
+                    time.sleep(losowaWartosc)
+            else:
+                print("poza godzinami pracy - nie losuję")
+                time.sleep(1800)
 
 
 def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
-    global wydarzenieLosowaniaInicjatoraNegatywnego
     losowaWartosc = 1 # testowo random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
     if losowaWartosc == 1: 
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy("awaria_wezwania_windy", None) # testowo wskazany konkretny inicjator negatywny
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
             print('rozpoczęto aktywację inicjatora negatywnego po unikalności')
             aktywujInicjatorRuchuNegatywny(keyDoAktywacji, valueDoAktywacji)
-            losowanieInicjatoraNegatywnego.clear()
-            wydarzenieLosowaniaInicjatoraNegatywnego = False
         else:
             print('nie znaleziono inicjatora negatywnego po unikalności')
             pass
