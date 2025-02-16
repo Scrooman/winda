@@ -494,8 +494,6 @@ def aktywujDomyslnyInicjator():
     inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuPozytywnyZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
     zatrzymanieLosowaniaInicjatoraPozytywnego.clear()
-    losowanieInicjatoraPozytywnego.start()
-
 
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     while not zatrzymanieLosowaniaInicjatoraPozytywnego.is_set():
