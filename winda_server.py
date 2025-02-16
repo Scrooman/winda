@@ -583,14 +583,14 @@ def aktywujInicjatorRuchu(key, value):
     dane_symulacji['wydarzenieStatusSymulacji'] = True
     zatrzymanieSymulacjiPodaży.clear()
     wydarzenieSymulacjaPodaży = threading.Thread(target=lambda: dostosujCzestotliwoscGenerowaniaPasazerow(trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia), daemon=True)
-    wydarzenieSymulacjaPodaży.start() # do zmiany na dane pobierane z JSON
+    wydarzenieSymulacjaPodaży.start()
 
 
 
 def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
     if czasTrwania != 0:
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
-        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #testowo datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
+        dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
     else:
         dataZakonczeniaInicjatoraPozytywnego = None
     dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] = dataZakonczeniaInicjatoraPozytywnego
@@ -691,12 +691,11 @@ def aktywujInicjatorRuchuNegatywny(key, value):
         wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskowWyboruPietra, key) # TO DO: do zrobienia wyłączanie wybrania piętra
 
 
-def dezaktywujInicjatorNegatywny(kluczZdarzenia): # dodać przycisk usuwający na GUI na stronie
+def dezaktywujInicjatorNegatywny(kluczZdarzenia): 
+    print("rozpoczęto dezaktywację inicjatora negatywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchuNegatywne']:
-        print('dezaktywowano inicjator negatywny')
-        for key in wylaczone_pietra['słownik']:
-            if key in dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy'):
-                wylaczone_pietra['słownik'].pop(key)
+        awariaKierunkuJazdy = dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy', [])
+        wylaczone_pietra['wylaczone_pietra'] = [pietro for pietro in wylaczone_pietra['wylaczone_pietra'] if pietro not in awariaKierunkuJazdy]
         dane_symulacji['inicjatoryRuchuNegatywne'].pop(kluczZdarzenia)
     else:
         pass
