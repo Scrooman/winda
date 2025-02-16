@@ -198,7 +198,7 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    global wydarzenieLosowaniaInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
+    global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
     aktywujZapisywanieStatystyk()
