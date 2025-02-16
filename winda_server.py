@@ -581,7 +581,7 @@ def aktywujInicjatorRuchu(key, value):
     aktualizujWagiPięterDoWzywania(listaWagPieterLosowanych)
     listaWagPieterWybieranych = value.get('wagaPietraWybieranego')
     aktualizujWagiPięterDoWybrania(listaWagPieterWybieranych)
-    wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'), key)
+    wyliczZakonczenieInicjatoraPozytywnego(value.get('czasTrwania'))
     print("uruchamiany inicjator dla:", trybPracy, limitPolecen, zmiennaMinimalnegoOpoznienia, zmiennaMaksymalnegoOpoznienia)
     dane_symulacji['wydarzenieStatusSymulacji'] = True
     zatrzymanieSymulacjiPodaży.clear()
