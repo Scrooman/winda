@@ -691,12 +691,13 @@ def aktywujInicjatorRuchuNegatywny(key, value):
         wylosujPrzyciskiDoWylaczeniaZWybierania(liczbaPrzyciskowWyboruPietra, key) # TO DO: do zrobienia wyłączanie wybrania piętra
 
 
-# filepath: vscode-vfs://github/Scrooman/winda/winda_server.py
 def dezaktywujInicjatorNegatywny(kluczZdarzenia): 
     print("rozpoczęto dezaktywację inicjatora negatywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchuNegatywne']:
         awariaKierunkuJazdy = dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy', [])
-        wylaczone_pietra['slownik']['wylaczone_pietra'] = [pietro for pietro in wylaczone_pietra['slownik']['wylaczone_pietra'] if pietro not in awariaKierunkuJazdy]
+        for x in wylaczone_pietra['słownik']:
+            if x in awariaKierunkuJazdy:
+                wylaczone_pietra['słownik'].remove(x)
         dane_symulacji['inicjatoryRuchuNegatywne'].pop(kluczZdarzenia)
     else:
         print("Klucz zdarzenia nie istnieje w 'inicjatoryRuchuNegatywne'")
