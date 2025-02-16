@@ -204,7 +204,7 @@ def wlacz_wylacz_symulacje():
     global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
-    sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
+    sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
     aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
