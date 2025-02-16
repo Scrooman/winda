@@ -593,7 +593,6 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania, kluczInicjatora):
         losowaWartoscCzasuTrwania = round(random.uniform(0, 2), 2)
         dataZakonczeniaInicjatoraPozytywnego = datetime.datetime.now() + datetime.timedelta(seconds=10) #testowo datetime.timedelta(hours=(czasTrwania+losowaWartoscCzasuTrwania))
         zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.clear()
-        sprawdzanieDezaktywacjiInicjatoraPozytywnego.join()
         sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora), daemon=True)
         sprawdzanieDezaktywacjiInicjatoraPozytywnego.start()
     else:
@@ -608,6 +607,7 @@ def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             dezaktywujInicjator(kluczInicjatora)
             zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.set()
+            sprawdzanieDezaktywacjiInicjatoraPozytywnego.join()
             aktywujDomyslnyInicjator()
         else:
             pass
