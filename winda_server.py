@@ -29,6 +29,8 @@ losowanieInicjatoraNegatywnego = threading.Event() # Event do zarządzania aktyw
 wydarzenieLosowaniaInicjatoraNegatywnego = False
 #sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
 zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
+losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
+
 
 
 jsonFilePathStatistics = '/data/statystyki_windy.json'
@@ -202,8 +204,6 @@ def wlacz_wylacz_symulacje():
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
     aktywujZapisywanieStatystyk()
-    losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
-    losowanieInicjatoraPozytywnego.start()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
     losowanieInicjatoraNegatywnego.set()
