@@ -201,9 +201,10 @@ def get_status_symulacji():
 
 @app.route('/wlacz_wylacz_symulacje', methods=['POST'])
 def wlacz_wylacz_symulacje():
-    global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
+    global wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
+    losowanieInicjatoraPozytywnego.start()
     sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
     aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
@@ -490,25 +491,25 @@ def zamknijDrzwi(): # 0 - zamykanie, 1 - otwieranie, 2 - zamknięte, 3 - otwarte
 #___________________________________________________________________________________________________________________________
 
 def aktywujDomyslnyInicjator():
-    global losowanieInicjatoraPozytywnego, zatrzymanieLosowaniaInicjatoraPozytywnego
     inicjatorDoUruchomienia, inicjatorValue = wybierzInicjatorRuchuPozytywnyZListy('idle', None)
     aktywujInicjatorRuchu(inicjatorDoUruchomienia, inicjatorValue) # podstawiony domyslny tryb pracy
-    zatrzymanieLosowaniaInicjatoraPozytywnego.clear()
+
 
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
-    while not zatrzymanieLosowaniaInicjatoraPozytywnego.is_set():
-        if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23: # testowe wartości
-            print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
+    while True:
+        if dane_symulacji['inicjatoryRuchu']['idle']:
+            time.sleep(10) # testowowo time.sleep(1800)
+        else:
+            if 4 < datetime.datetime.now().hour < 23: # testowe wartości
+                print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
                 losowaWartosc = 10 # testowo random.randint(1600, 2600)
                 time.sleep(losowaWartosc)
-        else:
-            time.sleep(10) # testowowo time.sleep(1800)
+
 
 
 def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
-    global zatrzymanieLosowaniaInicjatoraPozytywnego, losowanieInicjatoraPozytywnego
     losowaWartosc = 1 # testowo random.randint(1, 3)
     if losowaWartosc == 1:  
         keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuPozytywnyZListy(None, unikalnoscInicjatora)
@@ -519,7 +520,6 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
                 dezaktywujInicjator(key)
             print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
             aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
-            zatrzymanieLosowaniaInicjatoraPozytywnego.set()
         else:
             print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
