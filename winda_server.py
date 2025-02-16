@@ -696,10 +696,7 @@ def dezaktywujInicjatorNegatywny(kluczZdarzenia):
     print("rozpoczęto dezaktywację inicjatora negatywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchuNegatywne']:
         awariaKierunkuJazdy = dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy', [])
-        if 'wylaczone_pietra' not in wylaczone_pietra:
-            wylaczone_pietra['wylaczone_pietra'] = []
-        # Usuwanie wartości z listy 'wylaczone_pietra' zawartych w 'awariaKierunkuJazdy'
-        wylaczone_pietra['wylaczone_pietra'] = [pietro for pietro in wylaczone_pietra['wylaczone_pietra'] if pietro not in awariaKierunkuJazdy]
+        wylaczone_pietra['slownik']['wylaczone_pietra'] = [pietro for pietro in wylaczone_pietra['slownik']['wylaczone_pietra'] if pietro not in awariaKierunkuJazdy]
         dane_symulacji['inicjatoryRuchuNegatywne'].pop(kluczZdarzenia)
     else:
         print("Klucz zdarzenia nie istnieje w 'inicjatoryRuchuNegatywne'")
