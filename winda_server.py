@@ -30,7 +30,6 @@ wydarzenieLosowaniaInicjatoraNegatywnego = False
 #sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event() # Event do zarządzania aktywnością wątku dezaktywacji inicjatora
 #zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego = threading.Event()
 losowanieInicjatoraPozytywnego = threading.Thread(target=lambda: cyklicznieLosujInicjatorPozytywny('normalny'), daemon=True)
-sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True)
 
 
 
@@ -205,7 +204,10 @@ def wlacz_wylacz_symulacje():
     global losowanieInicjatoraPozytywnego, wydarzenieLosowaniaInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
     aktywujDomyslnyInicjator()
-    sprawdzanieDezaktywacjiInicjatoraPozytywnego.start()
+    zatrzymanieSprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Event()
+    zatrzymanieSprawdzanieDezaktywacjiInicjatoraPozytywnego.clear()
+    sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=lambda: dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
+    zatrzymanieSprawdzanieDezaktywacjiInicjatoraPozytywnego.set()
     aktywujZapisywanieStatystyk()
     wydarzenieLosowaniaInicjatoraNegatywnego = True
     threading.Thread(target=lambda: cyklicznieLosujInicjatorNegatywny('normalny'), daemon=True).start()
@@ -600,14 +602,17 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
 
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu():
-    print("Sprawdzam inicjatory pozytywne do dezaktywacji")
     time.sleep(10) # testowo
+    print("Sprawdzam inicjatory pozytywne do dezaktywacji")
     if dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] is not None and datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
         print("rozpoczęto dezaktywację inicjatorów pozytywnych")
         for key in dane_symulacji['inicjatoryRuchu'].keys():
             print("dezaktywuję inicjator pozytywny", key)
             dezaktywujInicjator(key)
             aktywujDomyslnyInicjator()
+    else:
+        print("nie dezaktywuję inicjatorów pozytywnych")
+        pass
     
 
 def pobierzInicjatoryRuchuJSON():  
