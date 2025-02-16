@@ -497,15 +497,17 @@ def aktywujDomyslnyInicjator():
 
 def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     while True:
-        if dane_symulacji['inicjatoryRuchu']['idle']:
-            time.sleep(10) # testowowo time.sleep(1800)
-        else:
+        if 'idle' in dane_symulacji['inicjatoryRuchu']:
+            print("Aktywny pozytywny inicjator idle - losuję")
             if 4 < datetime.datetime.now().hour < 23: # testowe wartości
                 print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
                 losowaWartosc = 10 # testowo random.randint(1600, 2600)
                 time.sleep(losowaWartosc)
+        else:
+            print("Aktywny pozytywny inicjator ruchu - nie losuję")
+            time.sleep(10) # testowowo time.sleep(1800)
 
 
 
