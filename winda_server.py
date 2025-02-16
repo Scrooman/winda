@@ -520,7 +520,6 @@ def losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora):
             print('rozpoczęto aktywację inicjatora pozytywnego po unikalności')
             aktywujInicjatorRuchu(keyDoAktywacji, valueDoAktywacji)
             zatrzymanieLosowaniaInicjatoraPozytywnego.set()
-            losowanieInicjatoraPozytywnego.join()
         else:
             print('nie znaleziono inicjatora pozytywnego po unikalności')
             pass
