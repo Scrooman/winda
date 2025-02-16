@@ -607,7 +607,6 @@ def dezaktywujInicjatorPozytywnyPoZakonczeniu(kluczInicjatora):
         if datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             dezaktywujInicjator(kluczInicjatora)
             zatrzymanieSprawdzaniaDezaktywacjiInicjatoraPozytywnego.set()
-            sprawdzanieDezaktywacjiInicjatoraPozytywnego.join()
             aktywujDomyslnyInicjator()
         else:
             pass
