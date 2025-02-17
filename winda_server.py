@@ -306,8 +306,8 @@ def pobierzOdkrytychPasazerowJSON():
     try:
         with open(jsonFilePathOdkryciPasazerowie, 'r') as json_file:
             print("Plik z odkrytymi pasazerami istnieje przy wczytaniu")
-            print(json.load(json_file))
-            odkryci_pasazerowie["słownik"] = json.load(json_file)
+            data = json.load(json_file)  # Wczytaj dane JSON tylko raz
+            odkryci_pasazerowie["słownik"] = data
     except FileNotFoundError:
         print("Plik jsonFilePathOdkryciPasazerowie nie istnieje do wczytania.")
         odkryci_pasazerowie["słownik"] = {}
