@@ -1,0 +1,27 @@
+{
+"1": {
+	"nazwa": "Pasażer1",
+	"opis": "Krótki opis pasażera",
+	"ikona": "pasazer1",
+	"dataOdkrycia": "01-01-2025",
+	"liczbaPodrozy": 0,
+	"unikalnosc": "normalny"
+	},
+"2": {
+	"nazwa": "Pasażer2",
+	"opis": "Krótki opis pasażera",
+	"ikona": "pasazer2",
+	"dataOdkrycia": "01-01-2025",
+	"liczbaPodrozy": 0,
+	"unikalnosc": "normalny"
+	},
+"3": {
+	"nazwa": "Pasażer3",
+	"opis": "Krótki opis pasażera",
+	"ikona": "pasazer3",
+	"dataOdkrycia": "01-01-2025",
+	"liczbaPodrozy": 0,
+	"unikalnosc": "normalny"
+	}
+}
+	
