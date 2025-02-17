@@ -497,7 +497,7 @@ def cyklicznieLosujInicjatorPozytywny(unikalnoscInicjatora):
     while True:
         if 'idle' in dane_symulacji['inicjatoryRuchu']:
             print("Aktywny pozytywny inicjator idle - losuję")
-            if 4 < datetime.datetime.now().hour < 23: # testowe wartości
+            if 6 < datetime.datetime.now().hour < 23:
                 print("rozpoczęto losowanie inicjatora pozytywnego po unikalności")
             if losujInicjatorPozytywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                 print("odwleczenie w czasie losowania")
@@ -598,11 +598,11 @@ def wyliczZakonczenieInicjatoraPozytywnego(czasTrwania):
 
 def dezaktywujInicjatorPozytywnyPoZakonczeniu():
     while True:
-        time.sleep(60)  # testowo
+        time.sleep(60)
         print("Sprawdzam inicjatory pozytywne do dezaktywacji")
         if dane_symulacji['dataZakonczeniaInicjatoraPozytywnego'] is not None and datetime.datetime.now() >= dane_symulacji['dataZakonczeniaInicjatoraPozytywnego']:
             print("rozpoczęto dezaktywację inicjatorów pozytywnych")
-            klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())  # Tworzenie kopii kluczy
+            klucze_do_dezaktywacji = list(dane_symulacji['inicjatoryRuchu'].keys())
             for key in klucze_do_dezaktywacji:
                 print("dezaktywuję inicjator pozytywny", key)
                 dezaktywujInicjator(key)
@@ -629,14 +629,14 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
     while True:
         if dane_symulacji['inicjatoryRuchuNegatywne']:
             print("Aktywny negatywny inicjator - nie losuję")
-            time.sleep(15) #testowow time.sleep(1300)
+            time.sleep(1300)
         else:
             print("Incijator negatywny nie aktywny - sprawdzam warunki do losowania")
             if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23:
                 print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
                 if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                     print("odwleczenie w czasie losowania inicjatora negatywnego")
-                    losowaWartosc = 15 # testowo random.randint(1100, 2100)
+                    losowaWartosc = random.randint(1100, 2100)
                     time.sleep(losowaWartosc)
             else:
                 print("poza godzinami pracy - nie losuję")
@@ -644,11 +644,11 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
 
 
 def losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora):
-    losowaWartosc = 1 # testowo random.randint(1, 3) # testowo wskazana 100% szansa na aktywację
-    #testowo unikalnoscInicjatora = ["normalny"] * 10 + ["rzadki"] * 4 + ["unikalny"] * 2
-    wylosowanaUnikalnosc = "rzadki"  # testowo random.choice(unikalnoscInicjatora)
+    losowaWartosc = random.randint(1, 3)
+    unikalnoscInicjatora = ["normalny"] * 10 + ["rzadki"] * 4 + ["unikalny"] * 2
+    wylosowanaUnikalnosc = random.choice(unikalnoscInicjatora)
     if losowaWartosc == 1: 
-        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy(None, wylosowanaUnikalnosc) # testowo wskazany konkretny inicjator negatywny
+        keyDoAktywacji, valueDoAktywacji = wybierzInicjatorRuchuNegatywnyZListy(None, wylosowanaUnikalnosc)
         if keyDoAktywacji is not None and valueDoAktywacji is not None:
             print('rozpoczęto aktywację inicjatora negatywnego po unikalności')
             aktywujInicjatorRuchuNegatywny(keyDoAktywacji, valueDoAktywacji)
