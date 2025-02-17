@@ -38,6 +38,7 @@ losowanieInicjatoraNegatywnego = threading.Thread(target=lambda: cyklicznieLosuj
 jsonFilePathStatistics = '/data/statystyki_windy.json'
 jsonFilePathInicjatoryRuchu = '/data/inicjatory_ruchu.json'
 jsonFilePathInicjatoryRuchuNegatywne = '/data/inicjatory_negatywne_windy.json'
+jsonFilePathOdkryciPasazerowie = '/data/odkryci_pasazerowie.json'
 BASE_URL = 'https://winda.onrender.com'
 URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
@@ -112,6 +113,10 @@ dane_symulacji = {
     'inicjatoryRuchuNegatywne': {}
 }
 
+odkryci_pasazerowie = {
+    'słownik': {}
+}
+
 listaWagPieterDoWzywania = {pietro: 1 for pietro in wlasciwosci_windy['wielkośćSzybu']}
 dane_symulacji['listaWagPieterDoWzywania'] = listaWagPieterDoWzywania
 
@@ -171,7 +176,8 @@ def get_winda_status():
         'wlasciwosci_drzwi': {
             'polecenia_drzwi': wlasciwosci_drzwi.get('poleceniaDrzwi'),
             'status_pracy_drzwi': wlasciwosci_drzwi.get('statusPracyDrzwi')
-        }
+        },
+        'odkryci_pasazerowie': odkryci_pasazerowie.get('słownik')
     }
     return jsonify(combined_data)
 
@@ -292,7 +298,31 @@ def zapiszStatystykiOkresowo():
     while wydarzenieZapisywaniaStatystyk == True:
         time.sleep(60)
         zapiszStatystykiJSON(statystyki)
+        zapiszOdkryciPasazerowieJSON(odkryciPasazerowie)
 
+
+
+def pobierzOdkrytychPasazerowJSON():  
+    try:
+        with open(jsonFilePathOdkryciPasazerowie, 'r') as json_file:
+            print("Plik z odkrytymi pasazerami istnieje przy wczytaniu")
+            return json.load(json_file)
+    except FileNotFoundError:
+        print("Plik jsonFilePathOdkryciPasazerowie nie istnieje do wczytania.")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"Błąd dekodowania JSON: {e}")
+        return {}
+
+
+def zapiszOdkryciPasazerowieJSON(odkryciPasazerowie):
+    try:
+        with open(jsonFilePathOdkryciPasazerowie, 'w') as json_file:
+            print("Plik istnieje przy zapisywaniu")
+            json.dump(odkryciPasazerowie, json_file)
+    except FileNotFoundError:
+        print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
+        return
 
 #KOD FUNKCJI WINDY
 #___________________________________________________________________________________________________________________________
@@ -976,8 +1006,11 @@ def aktywujZapisywanieStatystyk():
     threading.Thread(target=zapiszStatystykiOkresowo, daemon=True).start()
     zapisywanieStatystyk.set()
 
+
+
 statystyki = odczytajStatystykiJSON()
 liczbaPokonanychPięter = statystyki["pokonane_pietra"]
 przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
+odkryciPasazerowie = pobierzOdkrytychPasazerowJSON()
