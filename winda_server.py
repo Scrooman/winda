@@ -629,14 +629,14 @@ def cyklicznieLosujInicjatorNegatywny(unikalnoscInicjatora):
     while True:
         if dane_symulacji['inicjatoryRuchuNegatywne']:
             print("Aktywny negatywny inicjator - nie losuję")
-            time.sleep(5) #testowow time.sleep(1300)
+            time.sleep(15) #testowow time.sleep(1300)
         else:
             print("Incijator negatywny nie aktywny - sprawdzam warunki do losowania")
             if datetime.datetime.now().hour > 4 and datetime.datetime.now().hour < 23:
                 print("rozpoczęto losowanie inicjatora negatywnego po unikalności")
                 if losujInicjatorNegatywnyPoUnikalnosc(unikalnoscInicjatora) == False:
                     print("odwleczenie w czasie losowania inicjatora negatywnego")
-                    losowaWartosc = 10 # testowo random.randint(1100, 2100)
+                    losowaWartosc = 15 # testowo random.randint(1100, 2100)
                     time.sleep(losowaWartosc)
             else:
                 print("poza godzinami pracy - nie losuję")
@@ -697,9 +697,7 @@ def dezaktywujInicjatorNegatywny(kluczZdarzenia):
     print("rozpoczęto dezaktywację inicjatora negatywnego")
     if kluczZdarzenia in dane_symulacji['inicjatoryRuchuNegatywne']:
         awariaKierunkuJazdy = dane_symulacji['inicjatoryRuchuNegatywne'][kluczZdarzenia].get('awariaKierunkuJazdy', [])
-        for x in wylaczone_pietra['słownik']:
-            if x in awariaKierunkuJazdy:
-                wylaczone_pietra['słownik'].remove(x)
+        wylaczone_pietra['słownik'] = [x for x in wylaczone_pietra['słownik'] if x not in awariaKierunkuJazdy]
         dane_symulacji['inicjatoryRuchuNegatywne'].pop(kluczZdarzenia)
     else:
         print("Klucz zdarzenia nie istnieje w 'inicjatoryRuchuNegatywne'")
