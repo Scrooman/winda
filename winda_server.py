@@ -1014,3 +1014,4 @@ przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
 odkryciPasazerowie = pobierzOdkrytychPasazerowJSON()
+odkryciPasazerowie = odkryci_pasazerowie["słownik"]
