@@ -298,7 +298,7 @@ def zapiszStatystykiOkresowo():
     while wydarzenieZapisywaniaStatystyk == True:
         time.sleep(60)
         zapiszStatystykiJSON(statystyki)
-        zapiszOdkryciPasazerowieJSON(odkryciPasazerowie)
+        # zapiszOdkryciPasazerowieJSON(odkryciPasazerowie) # do zapisywania odkrytych pasażerów
 
 
 
@@ -306,13 +306,14 @@ def pobierzOdkrytychPasazerowJSON():
     try:
         with open(jsonFilePathOdkryciPasazerowie, 'r') as json_file:
             print("Plik z odkrytymi pasazerami istnieje przy wczytaniu")
-            return json.load(json_file)
+            odkryci_pasazerowie["słownik"] = json.load(json_file)
     except FileNotFoundError:
         print("Plik jsonFilePathOdkryciPasazerowie nie istnieje do wczytania.")
-        return {}
+        odkryci_pasazerowie["słownik"] = {}
     except json.JSONDecodeError as e:
         print(f"Błąd dekodowania JSON: {e}")
-        return {}
+        odkryci_pasazerowie["słownik"] = {}
+    return odkryci_pasazerowie
 
 
 def zapiszOdkryciPasazerowieJSON(odkryciPasazerowie):
@@ -1013,5 +1014,5 @@ liczbaPokonanychPięter = statystyki["pokonane_pietra"]
 przebytaOdległość = statystyki["przebyta_odleglosc"]
 liczbaPrzystanków = statystyki["zaliczone_przystanki"]
 liczbaOczekującychPasażerów = statystyki["liczba_oczekujacych_pasazerow"]
-odkryciPasazerowie = pobierzOdkrytychPasazerowJSON()
-odkryciPasazerowie = odkryci_pasazerowie["słownik"]
+pobierzOdkrytychPasazerowJSON()
+
