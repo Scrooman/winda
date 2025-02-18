@@ -1008,7 +1008,7 @@ def dodajPasazerowDoOdkrytychPasazerow():
                         odkryci_pasazerowie['słownik'][pojedycznyIdPasazera] = {
                             'nazwa': "Pasażer" + str(pojedycznyIdPasazera),
                             'opis': "Krótki opis pasażera",
-                            'ikona': "pasażer" + str(pojedycznyIdPasazera),
+                            'ikona': "pasazer" + str(pojedycznyIdPasazera),
                             'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             'liczbaPodrozy': 1,
                             'unikalnosc': rodzajUnikalnosci
