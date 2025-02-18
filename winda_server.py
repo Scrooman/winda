@@ -886,7 +886,6 @@ characters_pool = {
 }
 
 def draw_character():
-    # Losowanie liczby od 1 do 10 000
     roll = random.randint(1, 1800)
     cumulative = 0
 
@@ -914,6 +913,8 @@ def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow
     zawartosc_pieter['oczekujacyPasazerowie'][GUID]['liczba_wygenerowanych_pasazerow'] = sum(len(zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'][key]) for key in zawartosc_pieter['oczekujacyPasazerowie'][GUID]['rodzaje_pasazerow'])
             
 
+
+
 def oznaczWygenerowanychPasazerowJakoNieobsluzonych():
     for pietra in wylaczone_pietra['słownik']: # weryfikacja czy grupa pasazerow zostala wygenerowana na wyłączonym piętrze
         for grupa_key in list(zawartosc_pieter['oczekujacyPasazerowie'].keys()):
@@ -928,12 +929,6 @@ def symulujWybórPięter(celPasazerow):
     if dane_symulacji['statusSymulacji'] == 1:
         if wskażPiętro(celPasazerow, 1) != False:
             zapiszWskazanePiętro(celPasazerow, 1)
-        #liczbaOczekującychPasażerówNaPietrze = next((l for p, l in pietraIPasazerowie if p == windy_data['lokalizacjaWindy']), 0)
-        #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
-        #statystyki['przewiezieni_pasazerowie']['typ1'] += liczbaOczekującychPasażerówNaPietrze
-        #powiekszLiczbePasazerowWWindzie(liczbaOczekującychPasażerówNaPietrze)
-        #liczbaOczekującychPasażerów = sum(l for p, l in pietraIPasazerowie)
-        #statystyki["liczba_oczekujacych_pasazerow"] = liczbaOczekującychPasażerów
     else:
         return
 
@@ -999,7 +994,25 @@ def zapiszStatystykiPrzewiezionychPasazerow():
         if pasazerowie['cel'] == windy_data['lokalizacjaWindy']:
             for rodzaj, lista in pasazerowie['rodzaje_pasazerow'].items():
                 statystyki['przewiezieni_pasazerowie'][f'typ{["normalny", "unikalny", "legendarny"].index(rodzaj) + 1}'] += len(lista)
+                dodajPasazerowDoOdkrytychPasazerow()
     return
+
+
+def dodajPasazerowDoOdkrytychPasazerow():
+    unikalnosc = ["normalny", "unikalny", "legendarny"]
+    for rodzajUnikalnosci in unikalnosc:
+        for grupaPasazerow in zawartosc_windy['wiezieniPasazerowie'].items():
+            for grupaIdPasazerow in zawartosc_windy['wiezieniPasazerowie'][grupaPasazerow]['rodzaje_pasazerow'][rodzajUnikalnosci]:
+                for pojedycznyIdPasazera in grupaIdPasazerow:
+                    if pojedycznyIdPasazera not in odkryci_pasazerowie['slownik']:
+                        odkryci_pasazerowie['slownik'][pojedycznyIdPasazera] = {
+                            'nazwa': "Pasażer" + pojedycznyIdPasazera,
+                            'opis': "Krótki opis pasażera",
+                            'ikona': "pasażer" + pojedycznyIdPasazera,
+                            'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            'liczbaPodrozy': 1,
+                            'unikalnosc': rodzajUnikalnosci
+                        }
 
 
 def aktywujZapisywanieStatystyk():
