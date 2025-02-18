@@ -1001,14 +1001,14 @@ def zapiszStatystykiPrzewiezionychPasazerow():
 def dodajPasazerowDoOdkrytychPasazerow():
     unikalnosc = ["normalny", "unikalny", "legendarny"]
     for rodzajUnikalnosci in unikalnosc:
-        for grupaPasazerow in zawartosc_windy['wiezieniPasazerowie'].items():
-            for grupaIdPasazerow in zawartosc_windy['wiezieniPasazerowie'][grupaPasazerow]['rodzaje_pasazerow'][rodzajUnikalnosci]:
+        for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
+            for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
                 for pojedycznyIdPasazera in grupaIdPasazerow:
                     if pojedycznyIdPasazera not in odkryci_pasazerowie['slownik']:
                         odkryci_pasazerowie['slownik'][pojedycznyIdPasazera] = {
-                            'nazwa': "Pasażer" + pojedycznyIdPasazera,
+                            'nazwa': "Pasażer" + str(pojedycznyIdPasazera),
                             'opis': "Krótki opis pasażera",
-                            'ikona': "pasażer" + pojedycznyIdPasazera,
+                            'ikona': "pasażer" + str(pojedycznyIdPasazera),
                             'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             'liczbaPodrozy': 1,
                             'unikalnosc': rodzajUnikalnosci
