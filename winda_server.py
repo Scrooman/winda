@@ -1004,8 +1004,8 @@ def dodajPasazerowDoOdkrytychPasazerow():
         for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
             for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
                 for pojedycznyIdPasazera in grupaIdPasazerow:
-                    if pojedycznyIdPasazera not in odkryci_pasazerowie['slownik']:
-                        odkryci_pasazerowie[pojedycznyIdPasazera] = {
+                    if pojedycznyIdPasazera not in odkryci_pasazerowie['słownik']:
+                        odkryci_pasazerowie['słownik'][pojedycznyIdPasazera] = {
                             'nazwa': "Pasażer" + str(pojedycznyIdPasazera),
                             'opis': "Krótki opis pasażera",
                             'ikona': "pasażer" + str(pojedycznyIdPasazera),
