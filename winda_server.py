@@ -1005,7 +1005,7 @@ def dodajPasazerowDoOdkrytychPasazerow():
             for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
                 for pojedycznyIdPasazera in grupaIdPasazerow:
                     if pojedycznyIdPasazera not in odkryci_pasazerowie['slownik']:
-                        odkryci_pasazerowie['slownik'][pojedycznyIdPasazera] = {
+                        odkryci_pasazerowie[pojedycznyIdPasazera] = {
                             'nazwa': "Pasażer" + str(pojedycznyIdPasazera),
                             'opis': "Krótki opis pasażera",
                             'ikona': "pasażer" + str(pojedycznyIdPasazera),
