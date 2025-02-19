@@ -39,6 +39,7 @@ jsonFilePathStatistics = '/data/statystyki_windy.json'
 jsonFilePathInicjatoryRuchu = '/data/inicjatory_ruchu.json'
 jsonFilePathInicjatoryRuchuNegatywne = '/data/inicjatory_negatywne_windy.json'
 jsonFilePathOdkryciPasazerowie = '/data/odkryci_pasazerowie.json'
+jsonFilePathBazaPasazerow = '/data/baza_pasazerow.json'
 BASE_URL = 'https://winda.onrender.com'
 URL_POST_WLACZ_WYLACZ_SYMULACJE = f'{BASE_URL}/wlacz_wylacz_symulacje'
 
@@ -114,6 +115,10 @@ dane_symulacji = {
 }
 
 odkryci_pasazerowie = {
+    'słownik': {}
+}
+
+baza_pasazerow = {
     'słownik': {}
 }
 
@@ -210,6 +215,7 @@ def get_status_symulacji():
 def wlacz_wylacz_symulacje():
     global losowanieInicjatoraNegatywnego, sprawdzanieDezaktywacjiInicjatoraPozytywnego
     #dane_symulacji['statusSymulacji'] = request.json.get('statusSymulacji')
+    pobierzBazePasazerowJSON()
     aktywujDomyslnyInicjator()
     losowanieInicjatoraPozytywnego.start()
     sprawdzanieDezaktywacjiInicjatoraPozytywnego = threading.Thread(target=dezaktywujInicjatorPozytywnyPoZakonczeniu, daemon=True).start()
@@ -325,6 +331,20 @@ def zapiszOdkryciPasazerowieJSON(odkryciPasazerowie):
     except FileNotFoundError:
         print("Plik nie istnieje do zapisu. Zwracam pusty słownik.")
         return
+
+def pobierzBazePasazerowJSON():  
+    try:
+        with open(jsonFilePathBazaPasazerow, 'r') as json_file:
+            print("Plik z bazą pasażerów istnieje przy wczytaniu")
+            data = json.load(json_file)  # Wczytaj dane JSON tylko raz
+            baza_pasazerow["słownik"] = data
+    except FileNotFoundError:
+        print("Plik jsonFilePathOdkryciPasazerowie nie istnieje do wczytania.")
+        baza_pasazerow["słownik"] = {}
+    except json.JSONDecodeError as e:
+        print(f"Błąd dekodowania JSON: {e}")
+        baza_pasazerow["słownik"] = {}
+    return baza_pasazerow
 
 #KOD FUNKCJI WINDY
 #___________________________________________________________________________________________________________________________
@@ -875,24 +895,15 @@ def generujGUID():
         startGUID += 1
     return str(startGUID)
 
-# baza bohaterów zostanie przenieisona do SQL
-characters_pool = {
-"1": {"chance": 300, "description": "normalny"},
-"2": {"chance": 300, "description": "normalny"},
-"3": {"chance": 300, "description": "unikalny"},
-"4": {"chance": 300, "description": "unikalny"},
-"5": {"chance": 300, "description": "legendarny"},
-"6": {"chance": 300, "description": "legendarny"},
-}
 
 def draw_character():
-    roll = random.randint(1, 1800)
+    roll = random.randint(1, 10000)
     cumulative = 0
 
-    for id, data in characters_pool.items():
-        cumulative += data["chance"]
+    for id, data in baza_pasazerow["słownik"].items():
+        cumulative += data["szansa"]
         if roll <= cumulative:
-            return id, data["description"]
+            return id, data["unikalnosc"]
 
 def generujGrupePasazerowNaPietrze(zrodloPasazera, liczbaPasazerow, celPasazerow, kierunekJazdyPasażerów):
     GUID = generujGUID()
