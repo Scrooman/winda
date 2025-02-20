@@ -1013,20 +1013,26 @@ def dodajPasazerowDoOdkrytychPasazerow():
     unikalnosc = ["normalny", "unikalny", "legendarny"]
     for rodzajUnikalnosci in unikalnosc:
         for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
-            for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
-                for pojedynczyIdPasazera in grupaIdPasazerow:
+            for grupaIdPasazerowKey, grupaIdPasazerowValue in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci].items():
+                for pojedynczyIdPasazera in grupaIdPasazerowValue:
                     if pojedynczyIdPasazera not in odkryci_pasazerowie['słownik']:
-                        nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
-                        opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['opis']
-                        ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['ikona']
-                        odkryci_pasazerowie['słownik'][pojedynczyIdPasazera] = {
-                            'nazwa': nazwaOdkrytegoPasazera,
-                            'opis': opisOdkrytegoPasazera,
-                            'ikona': ikonaOdkrytegoPasazera,
-                            'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            'liczbaPodrozy': 1,
-                            'unikalnosc': rodzajUnikalnosci
-                        }
+                        if pojedynczyIdPasazera in baza_pasazerow['słownik']:
+                            nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
+                            opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['opis']
+                            ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['ikona']
+                            odkryci_pasazerowie['słownik'][pojedynczyIdPasazera] = {
+                                'nazwa': nazwaOdkrytegoPasazera,
+                                'opis': opisOdkrytegoPasazera,
+                                'ikona': ikonaOdkrytegoPasazera,
+                                'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                'liczbaPodrozy': 1,
+                                'unikalnosc': rodzajUnikalnosci
+                            }
+                            print("Dodano pasażera do odkrytych pasażerów z ID:", pojedynczyIdPasazera)
+                        else:
+                            print("Nie znaleziono pasażera w bazie o ID:", pojedynczyIdPasazera)
+                            pass
+
 
 
 def aktywujZapisywanieStatystyk():
