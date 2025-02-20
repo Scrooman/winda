@@ -1013,29 +1013,26 @@ def dodajPasazerowDoOdkrytychPasazerow():
     unikalnosc = ["normalny", "unikalny", "legendarny"]
     for rodzajUnikalnosci in unikalnosc:
         for grupa_value in zawartosc_windy['wiezieniPasazerowie'].values():
-            for listaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
-                print("Lista ID pasażerów:", listaIdPasazerow)
-                for pojedynczyIdPasazera in listaIdPasazerow:
-                    print("Pojedynczy ID pasażera:", pojedynczyIdPasazera)
-                    pojedynczyIdPasazera_str = str(pojedynczyIdPasazera)
-                    print("Pojedynczy ID pasażera str:", pojedynczyIdPasazera_str)
-                    if pojedynczyIdPasazera_str not in odkryci_pasazerowie['słownik']:
-                        if pojedynczyIdPasazera_str in baza_pasazerow['słownik']:
-                            nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['nazwa']
-                            opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['opis']
-                            ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['ikona']
-                            odkryci_pasazerowie['słownik'][pojedynczyIdPasazera_str] = {
-                                'nazwa': nazwaOdkrytegoPasazera,
-                                'opis': opisOdkrytegoPasazera,
-                                'ikona': ikonaOdkrytegoPasazera,
-                                'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                'liczbaPodrozy': 1,
-                                'unikalnosc': rodzajUnikalnosci
-                            }
-                            print("Dodano pasażera do odkrytych pasażerów z ID:", pojedynczyIdPasazera_str)
-                        else:
-                            print("Nie znaleziono pasażera w bazie o ID:", pojedynczyIdPasazera_str)
-                            pass
+            for pojedynczyIdPasazera in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
+                print("Lista ID pasażerów:", pojedynczyIdPasazera)
+                pojedynczyIdPasazera_str = str(pojedynczyIdPasazera)
+                if pojedynczyIdPasazera_str not in odkryci_pasazerowie['słownik']:
+                    if pojedynczyIdPasazera_str in baza_pasazerow['słownik']:
+                        nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['nazwa']
+                        opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['opis']
+                        ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['ikona']
+                        odkryci_pasazerowie['słownik'][pojedynczyIdPasazera_str] = {
+                            'nazwa': nazwaOdkrytegoPasazera,
+                            'opis': opisOdkrytegoPasazera,
+                            'ikona': ikonaOdkrytegoPasazera,
+                            'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            'liczbaPodrozy': 1,
+                            'unikalnosc': rodzajUnikalnosci
+                        }
+                        print("Dodano pasażera do odkrytych pasażerów z ID:", pojedynczyIdPasazera_str)
+                    else:
+                        print("Nie znaleziono pasażera w bazie o ID:", pojedynczyIdPasazera_str)
+                        pass
 
 
 
