@@ -1016,10 +1016,13 @@ def dodajPasazerowDoOdkrytychPasazerow():
             for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
                 for pojedycznyIdPasazera in grupaIdPasazerow:
                     if pojedycznyIdPasazera not in odkryci_pasazerowie['słownik']:
+                        nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['nazwa']
+                        opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['opis']
+                        ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['ikona']
                         odkryci_pasazerowie['słownik'][pojedycznyIdPasazera] = {
-                            'nazwa': "Pasażer" + str(pojedycznyIdPasazera),
-                            'opis': "Krótki opis pasażera",
-                            'ikona': "pasazer" + str(pojedycznyIdPasazera),
+                            'nazwa': nazwaOdkrytegoPasazera,
+                            'opis': opisOdkrytegoPasazera,
+                            'ikona': ikonaOdkrytegoPasazera,
                             'dataOdkrycia': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             'liczbaPodrozy': 1,
                             'unikalnosc': rodzajUnikalnosci
