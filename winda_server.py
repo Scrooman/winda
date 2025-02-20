@@ -304,7 +304,7 @@ def zapiszStatystykiOkresowo():
     while wydarzenieZapisywaniaStatystyk == True:
         time.sleep(60)
         zapiszStatystykiJSON(statystyki)
-        # zapiszOdkryciPasazerowieJSON(odkryciPasazerowie) # do zapisywania odkrytych pasażerów
+        zapiszOdkryciPasazerowieJSON(odkryci_pasazerowie['słownik'])
 
 
 
