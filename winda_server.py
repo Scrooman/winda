@@ -312,8 +312,8 @@ def pobierzOdkrytychPasazerowJSON():
     try:
         with open(jsonFilePathOdkryciPasazerowie, 'r') as json_file:
             print("Plik z odkrytymi pasazerami istnieje przy wczytaniu")
-            data = json.load(json_file)  # Wczytaj dane JSON tylko raz
-            odkryci_pasazerowie["słownik"] = data
+            data = json.load(json_file) 
+            odkryci_pasazerowie["słownik"] = {} # testowo data
     except FileNotFoundError:
         print("Plik jsonFilePathOdkryciPasazerowie nie istnieje do wczytania.")
         odkryci_pasazerowie["słownik"] = {}
@@ -1012,9 +1012,9 @@ def zapiszStatystykiPrzewiezionychPasazerow():
 def dodajPasazerowDoOdkrytychPasazerow():
     unikalnosc = ["normalny", "unikalny", "legendarny"]
     for rodzajUnikalnosci in unikalnosc:
-        for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
-            for rodzajUnikalnosci in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
-                for pojedynczyIdPasazera in rodzajUnikalnosci:
+        for grupa_value in zawartosc_windy['wiezieniPasazerowie'].values():
+            for listaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
+                for pojedynczyIdPasazera in listaIdPasazerow:
                     if str(pojedynczyIdPasazera) not in odkryci_pasazerowie['słownik']:
                         if str(pojedynczyIdPasazera) in baza_pasazerow['słownik']:
                             nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
