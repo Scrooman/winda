@@ -1014,9 +1014,9 @@ def dodajPasazerowDoOdkrytychPasazerow():
     for rodzajUnikalnosci in unikalnosc:
         for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
             for rodzajUnikalnosci in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
-                for pojedynczyIdPasazera in rodzajUnikalnosci:
-                    if pojedynczyIdPasazera not in odkryci_pasazerowie['słownik']:
-                        if pojedynczyIdPasazera in baza_pasazerow['słownik']:
+                for str(pojedynczyIdPasazera) in rodzajUnikalnosci:
+                    if str(pojedynczyIdPasazera) not in odkryci_pasazerowie['słownik']:
+                        if str(pojedynczyIdPasazera) in baza_pasazerow['słownik']:
                             nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
                             opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['opis']
                             ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['ikona']
