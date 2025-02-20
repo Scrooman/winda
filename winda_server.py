@@ -897,7 +897,7 @@ def generujGUID():
 
 
 def draw_character():
-    roll = random.randint(1, 10000)
+    roll = random.randint(1, 9563)
     cumulative = 0
 
     for id, data in baza_pasazerow["słownik"].items():
@@ -1014,12 +1014,12 @@ def dodajPasazerowDoOdkrytychPasazerow():
     for rodzajUnikalnosci in unikalnosc:
         for grupa_key, grupa_value in zawartosc_windy['wiezieniPasazerowie'].items():
             for grupaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
-                for pojedycznyIdPasazera in grupaIdPasazerow:
-                    if pojedycznyIdPasazera not in odkryci_pasazerowie['słownik']:
-                        nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['nazwa']
-                        opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['opis']
-                        ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedycznyIdPasazera]['ikona']
-                        odkryci_pasazerowie['słownik'][pojedycznyIdPasazera] = {
+                for pojedynczyIdPasazera in grupaIdPasazerow:
+                    if pojedynczyIdPasazera not in odkryci_pasazerowie['słownik']:
+                        nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
+                        opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['opis']
+                        ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['ikona']
+                        odkryci_pasazerowie['słownik'][pojedynczyIdPasazera] = {
                             'nazwa': nazwaOdkrytegoPasazera,
                             'opis': opisOdkrytegoPasazera,
                             'ikona': ikonaOdkrytegoPasazera,
