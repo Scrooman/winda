@@ -1014,8 +1014,11 @@ def dodajPasazerowDoOdkrytychPasazerow():
     for rodzajUnikalnosci in unikalnosc:
         for grupa_value in zawartosc_windy['wiezieniPasazerowie'].values():
             for listaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
+                print("Lista ID pasażerów:", listaIdPasazerow)
                 for pojedynczyIdPasazera in listaIdPasazerow:
+                    print("Pojedynczy ID pasażera:", pojedynczyIdPasazera)
                     pojedynczyIdPasazera_str = str(pojedynczyIdPasazera)
+                    print("Pojedynczy ID pasażera str:", pojedynczyIdPasazera_str)
                     if pojedynczyIdPasazera_str not in odkryci_pasazerowie['słownik']:
                         if pojedynczyIdPasazera_str in baza_pasazerow['słownik']:
                             nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['nazwa']
