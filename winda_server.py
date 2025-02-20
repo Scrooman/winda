@@ -1015,12 +1015,13 @@ def dodajPasazerowDoOdkrytychPasazerow():
         for grupa_value in zawartosc_windy['wiezieniPasazerowie'].values():
             for listaIdPasazerow in grupa_value['rodzaje_pasazerow'][rodzajUnikalnosci]:
                 for pojedynczyIdPasazera in listaIdPasazerow:
-                    if str(pojedynczyIdPasazera) not in odkryci_pasazerowie['słownik']:
-                        if str(pojedynczyIdPasazera) in baza_pasazerow['słownik']:
-                            nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['nazwa']
-                            opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['opis']
-                            ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera]['ikona']
-                            odkryci_pasazerowie['słownik'][pojedynczyIdPasazera] = {
+                    pojedynczyIdPasazera_str = str(pojedynczyIdPasazera)
+                    if pojedynczyIdPasazera_str not in odkryci_pasazerowie['słownik']:
+                        if pojedynczyIdPasazera_str in baza_pasazerow['słownik']:
+                            nazwaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['nazwa']
+                            opisOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['opis']
+                            ikonaOdkrytegoPasazera = baza_pasazerow['słownik'][pojedynczyIdPasazera_str]['ikona']
+                            odkryci_pasazerowie['słownik'][pojedynczyIdPasazera_str] = {
                                 'nazwa': nazwaOdkrytegoPasazera,
                                 'opis': opisOdkrytegoPasazera,
                                 'ikona': ikonaOdkrytegoPasazera,
@@ -1028,9 +1029,9 @@ def dodajPasazerowDoOdkrytychPasazerow():
                                 'liczbaPodrozy': 1,
                                 'unikalnosc': rodzajUnikalnosci
                             }
-                            print("Dodano pasażera do odkrytych pasażerów z ID:", pojedynczyIdPasazera)
+                            print("Dodano pasażera do odkrytych pasażerów z ID:", pojedynczyIdPasazera_str)
                         else:
-                            print("Nie znaleziono pasażera w bazie o ID:", pojedynczyIdPasazera)
+                            print("Nie znaleziono pasażera w bazie o ID:", pojedynczyIdPasazera_str)
                             pass
 
 
