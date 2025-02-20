@@ -1,11 +1,4 @@
 {
-"1": {
-	"nazwa": "Królowa z północy",
-	"opis": "Zimna ale sprawiedliwa",
-	"ikona": "pasazer1",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
 "2": {
 	"nazwa": "Obywatelka z miasteczka",
 	"opis": "Zwykła mieszkanka",
@@ -227,6 +220,13 @@
 	"nazwa": "Córka Króla",
 	"opis": "Z głową w chmurach",
 	"ikona": "pasazer33",
+	"unikalnosc": "legendarny",
+	"szansa": 1
+	},
+"1": {
+	"nazwa": "Królowa z północy",
+	"opis": "Zimna ale sprawiedliwa",
+	"ikona": "pasazer1",
 	"unikalnosc": "legendarny",
 	"szansa": 1
 	}
