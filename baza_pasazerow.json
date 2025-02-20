@@ -1,233 +1,233 @@
 {
 "2": {
-	"nazwa": "Obywatelka z miasteczka",
-	"opis": "Zwykła mieszkanka",
-	"ikona": "pasazer2",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatelka z miasteczka",
+    "opis": "Zwykła mieszkanka",
+    "ikona": "pasazer2",
+    "unikalnosc": "normalny",
+    "szansa": 1051
+    },
 "3": {
-	"nazwa": "Obywatelka z portu",
-	"opis": "Sprzedaje ryby",
-	"ikona": "pasazer3",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatelka z portu",
+    "opis": "Sprzedaje ryby",
+    "ikona": "pasazer3",
+    "unikalnosc": "normalny",
+    "szansa": 1041
+    },
 "4": {
-	"nazwa": "Obywatelka ze wsi",
-	"opis": "Hoduje kury",
-	"ikona": "pasazer4",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatelka ze wsi",
+    "opis": "Hoduje kury",
+    "ikona": "pasazer4",
+    "unikalnosc": "normalny",
+    "szansa": 1031
+    },
 "5": {
-	"nazwa": "Obywatel z miasteczka",
-	"opis": "Znany wśród sąsiadów",
-	"ikona": "pasazer5",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatel z miasteczka",
+    "opis": "Znany wśród sąsiadów",
+    "ikona": "pasazer5",
+    "unikalnosc": "normalny",
+    "szansa": 1021
+    },
 "6": {
-	"nazwa": "Obywatel z portu",
-	"opis": "Zawzięty rybak",
-	"ikona": "pasazer6",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatel z portu",
+    "opis": "Zawzięty rybak",
+    "ikona": "pasazer6",
+    "unikalnosc": "normalny",
+    "szansa": 1011
+    },
 "7": {
-	"nazwa": "Obywatel ze wsi",
-	"opis": "Styrany rolą",
-	"ikona": "pasazer7",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatel ze wsi",
+    "opis": "Styrany rolą",
+    "ikona": "pasazer7",
+    "unikalnosc": "normalny",
+    "szansa": 1001
+    },
 "8": {
-	"nazwa": "Obywatelka z miasta",
-	"opis": "Uczestniczka rady miasta",
-	"ikona": "pasazer8",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatelka z miasta",
+    "opis": "Uczestniczka rady miasta",
+    "ikona": "pasazer8",
+    "unikalnosc": "normalny",
+    "szansa": 991
+    },
 "9": {
-	"nazwa": "Obywatel z miasta",
-	"opis": "Spełniony biznesmen",
-	"ikona": "pasazer9",
-	"unikalnosc": "normalny",
-	"szansa": 1061
-	},
+    "nazwa": "Obywatel z miasta",
+    "opis": "Spełniony biznesmen",
+    "ikona": "pasazer9",
+    "unikalnosc": "normalny",
+    "szansa": 981
+    },
 "10": {
-	"nazwa": "Myśliwy z lasu",
-	"opis": "Upoluje każdą zwierzynę",
-	"ikona": "pasazer10",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Myśliwy z lasu",
+    "opis": "Upoluje każdą zwierzynę",
+    "ikona": "pasazer10",
+    "unikalnosc": "unikalny",
+    "szansa": 99
+    },
 "11": {
-	"nazwa": "Łowczyni z lasu",
-	"opis": "Zwinna i giętka jak łania",
-	"ikona": "pasazer11",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Łowczyni z lasu",
+    "opis": "Zwinna i giętka jak łania",
+    "ikona": "pasazer11",
+    "unikalnosc": "unikalny",
+    "szansa": 98
+    },
 "12": {
-	"nazwa": "Łowczyni z dżungli",
-	"opis": "Las to jej dom",
-	"ikona": "pasazer12",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Łowczyni z dżungli",
+    "opis": "Las to jej dom",
+    "ikona": "pasazer12",
+    "unikalnosc": "unikalny",
+    "szansa": 97
+    },
 "13": {
-	"nazwa": "Myśliwy z dżungli",
-	"opis": "Urodzony wśród małp",
-	"ikona": "pasazer13",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Myśliwy z dżungli",
+    "opis": "Urodzony wśród małp",
+    "ikona": "pasazer13",
+    "unikalnosc": "unikalny",
+    "szansa": 96
+    },
 "14": {
-	"nazwa": "Paladyn z królestwa",
-	"opis": "Przyświeca mu Bóg",
-	"ikona": "pasazer14",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Paladyn z królestwa",
+    "opis": "Przyświeca mu Bóg",
+    "ikona": "pasazer14",
+    "unikalnosc": "unikalny",
+    "szansa": 95
+    },
 "15": {
-	"nazwa": "Paladynka z królestwa",
-	"opis": "Oddana swej wierze",
-	"ikona": "pasazer15",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Paladynka z królestwa",
+    "opis": "Oddana swej wierze",
+    "ikona": "pasazer15",
+    "unikalnosc": "unikalny",
+    "szansa": 94
+    },
 "16": {
-	"nazwa": "Czarodziejka z wieży",
-	"opis": "Natchniona mocą",
-	"ikona": "pasazer16",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Czarodziejka z wieży",
+    "opis": "Natchniona mocą",
+    "ikona": "pasazer16",
+    "unikalnosc": "unikalny",
+    "szansa": 93
+    },
 "17": {
-	"nazwa": "Czarodziejka z zamku",
-	"opis": "Służy królowi",
-	"ikona": "pasazer17",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Czarodziejka z zamku",
+    "opis": "Służy królowi",
+    "ikona": "pasazer17",
+    "unikalnosc": "unikalny",
+    "szansa": 92
+    },
 "18": {
-	"nazwa": "Czarodziejka z akademii",
-	"opis": "Oddana wiedzy",
-	"ikona": "pasazer18",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Czarodziejka z akademii",
+    "opis": "Oddana wiedzy",
+    "ikona": "pasazer18",
+    "unikalnosc": "unikalny",
+    "szansa": 91
+    },
 "19": {
-	"nazwa": "Arcyksiężnik z wieży",
-	"opis": "Niebezpieczny ale prawy",
-	"ikona": "pasazer19",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Arcyksiężnik z wieży",
+    "opis": "Niebezpieczny ale prawy",
+    "ikona": "pasazer19",
+    "unikalnosc": "unikalny",
+    "szansa": 90
+    },
 "20": {
-	"nazwa": "Arcyksiężnik z zamku",
-	"opis": "Strażnik króla",
-	"ikona": "pasazer20",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Arcyksiężnik z zamku",
+    "opis": "Strażnik króla",
+    "ikona": "pasazer20",
+    "unikalnosc": "unikalny",
+    "szansa": 89
+    },
 "21": {
-	"nazwa": "Arcyksiężnik z akademii",
-	"opis": "Naczelny nauczyciel",
-	"ikona": "pasazer21",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Arcyksiężnik z akademii",
+    "opis": "Naczelny nauczyciel",
+    "ikona": "pasazer21",
+    "unikalnosc": "unikalny",
+    "szansa": 88
+    },
 "22": {
-	"nazwa": "Uzdrowiecielka ze świątyni",
-	"opis": "Oddaje część siebie",
-	"ikona": "pasazer22",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Uzdrowiecielka ze świątyni",
+    "opis": "Oddaje część siebie",
+    "ikona": "pasazer22",
+    "unikalnosc": "unikalny",
+    "szansa": 87
+    },
 "23": {
-	"nazwa": "Uzdrowiecielka uczona",
-	"opis": "Przekazuje wiedzę dalej",
-	"ikona": "pasazer23",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Uzdrowiecielka uczona",
+    "opis": "Przekazuje wiedzę dalej",
+    "ikona": "pasazer23",
+    "unikalnosc": "unikalny",
+    "szansa": 86
+    },
 "24": {
-	"nazwa": "Zaklinaczka z kultu",
-	"opis": "Podejrzana o uroki",
-	"ikona": "pasazer24",
-	"unikalnosc": "unikalny",
-	"szansa": 100
-	},
+    "nazwa": "Zaklinaczka z kultu",
+    "opis": "Podejrzana o uroki",
+    "ikona": "pasazer24",
+    "unikalnosc": "unikalny",
+    "szansa": 85
+    },
 "25": {
-	"nazwa": "Król z północy",
-	"opis": "Szlachetny dziedzic",
-	"ikona": "pasazer25",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Król z północy",
+    "opis": "Szlachetny dziedzic",
+    "ikona": "pasazer25",
+    "unikalnosc": "legendarny",
+    "szansa": 10
+    },
 "26": {
-	"nazwa": "Król z południa",
-	"opis": "Rządzi twardą ręką",
-	"ikona": "pasazer26",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Król z południa",
+    "opis": "Rządzi twardą ręką",
+    "ikona": "pasazer26",
+    "unikalnosc": "legendarny",
+    "szansa": 9
+    },
 "27": {
-	"nazwa": "Królowa z południa",
-	"opis": "Ukochana króla",
-	"ikona": "pasazer27",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Królowa z południa",
+    "opis": "Ukochana króla",
+    "ikona": "pasazer27",
+    "unikalnosc": "legendarny",
+    "szansa": 8
+    },
 "28": {
-	"nazwa": "Mędrzec z południa",
-	"opis": "Zawsze z cichy",
-	"ikona": "pasazer28",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Mędrzec z południa",
+    "opis": "Zawsze z cichy",
+    "ikona": "pasazer28",
+    "unikalnosc": "legendarny",
+    "szansa": 7
+    },
 "29": {
-	"nazwa": "Mędrzec z północy",
-	"opis": "Znający wszystkie zagadki",
-	"ikona": "pasazer29",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Mędrzec z północy",
+    "opis": "Znający wszystkie zagadki",
+    "ikona": "pasazer29",
+    "unikalnosc": "legendarny",
+    "szansa": 6
+    },
 "30": {
-	"nazwa": "Golas Janek",
-	"opis": "Wyrzucony przez żonę...",
-	"ikona": "pasazer30",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Golas Janek",
+    "opis": "Wyrzucony przez żonę...",
+    "ikona": "pasazer30",
+    "unikalnosc": "legendarny",
+    "szansa": 5
+    },
 "31": {
-	"nazwa": "Golas Juan",
-	"opis": "Uciekający przed zbirami",
-	"ikona": "pasazer31",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Golas Juan",
+    "opis": "Uciekający przed zbirami",
+    "ikona": "pasazer31",
+    "unikalnosc": "legendarny",
+    "szansa": 4
+    },
 "32": {
-	"nazwa": "Golas John",
-	"opis": "Po prostu John",
-	"ikona": "pasazer32",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Golas John",
+    "opis": "Po prostu John",
+    "ikona": "pasazer32",
+    "unikalnosc": "legendarny",
+    "szansa": 3
+    },
 "33": {
-	"nazwa": "Córka Króla",
-	"opis": "Z głową w chmurach",
-	"ikona": "pasazer33",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	},
+    "nazwa": "Córka Króla",
+    "opis": "Z głową w chmurach",
+    "ikona": "pasazer33",
+    "unikalnosc": "legendarny",
+    "szansa": 2
+    },
 "1": {
-	"nazwa": "Królowa z północy",
-	"opis": "Zimna ale sprawiedliwa",
-	"ikona": "pasazer1",
-	"unikalnosc": "legendarny",
-	"szansa": 1
-	}
+    "nazwa": "Królowa z północy",
+    "opis": "Zimna ale sprawiedliwa",
+    "ikona": "pasazer1",
+    "unikalnosc": "legendarny",
+    "szansa": 1
+    }
 }
