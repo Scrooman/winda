@@ -897,7 +897,7 @@ def generujGUID():
 
 
 def draw_character():
-    roll = random.randint(1, 9563)
+    roll = random.randint(1, 54635)
     cumulative = 0
 
     for id, data in baza_pasazerow["słownik"].items():
