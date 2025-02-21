@@ -4,56 +4,56 @@
     "opis": "Zwykła mieszkanka",
     "ikona": "pasazer2",
     "unikalnosc": "normalny",
-    "szansa": 1051
+    "szansa": 7000
     },
 "3": {
     "nazwa": "Obywatelka z portu",
     "opis": "Sprzedaje ryby",
     "ikona": "pasazer3",
     "unikalnosc": "normalny",
-    "szansa": 1041
+    "szansa": 6900
     },
 "4": {
     "nazwa": "Obywatelka ze wsi",
     "opis": "Hoduje kury",
     "ikona": "pasazer4",
     "unikalnosc": "normalny",
-    "szansa": 1031
+    "szansa": 6800
     },
 "5": {
     "nazwa": "Obywatel z miasteczka",
     "opis": "Znany wśród sąsiadów",
     "ikona": "pasazer5",
     "unikalnosc": "normalny",
-    "szansa": 1021
+    "szansa": 6700
     },
 "6": {
     "nazwa": "Obywatel z portu",
     "opis": "Zawzięty rybak",
     "ikona": "pasazer6",
     "unikalnosc": "normalny",
-    "szansa": 1011
+    "szansa": 6600
     },
 "7": {
     "nazwa": "Obywatel ze wsi",
     "opis": "Styrany rolą",
     "ikona": "pasazer7",
     "unikalnosc": "normalny",
-    "szansa": 1001
+    "szansa": 6500
     },
 "8": {
     "nazwa": "Obywatelka z miasta",
     "opis": "Uczestniczka rady miasta",
     "ikona": "pasazer8",
     "unikalnosc": "normalny",
-    "szansa": 991
+    "szansa": 6400
     },
 "9": {
     "nazwa": "Obywatel z miasta",
     "opis": "Spełniony biznesmen",
     "ikona": "pasazer9",
     "unikalnosc": "normalny",
-    "szansa": 981
+    "szansa": 6300
     },
 "10": {
     "nazwa": "Myśliwy z lasu",
